@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
 		<groupId>org.matsim</groupId>
@@ -12,7 +12,7 @@
 		<version>16.0-PR2706</version>
 
 		<!-- snapshot == not recommended: rather use PR-labelled release!-->
-<!--		<version>16.0-SNAPSHOT</version>-->
+		<!--		<version>16.0-SNAPSHOT</version>-->
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -157,9 +157,11 @@
 				<artifactId>protobuf-maven-plugin</artifactId>
 				<version>0.6.1</version>
 				<configuration>
-					<protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+					<protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+					</protocArtifact>
 					<pluginId>grpc-java</pluginId>
-					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+					</pluginArtifact>
 					<useArgumentFile>true</useArgumentFile>
 					<checkStaleness>true</checkStaleness>
 				</configuration>
@@ -172,15 +174,28 @@
 						</goals>
 						<phase>generate-sources</phase>
 					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Generates the python grpc files -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<executable>python</executable>
+					<arguments>
+						<argument>-m</argument>
+						<argument>grpc_tools.protoc</argument>
+						<argument>-Isrc/main/proto</argument>
+						<argument>--python_out=src/main/python/drtrl/server</argument>
+						<argument>--grpc_python_out=src/main/python/drtrl/server</argument>
+						<argument>src/main/proto/rebalancer.proto</argument>
+					</arguments>
+				</configuration>
+				<executions>
 					<execution>
-						<id>protobuf-python</id>
-						<goals>
-							<goal>compile-python</goal>
-						</goals>
-						<phase>generate-sources</phase>
-						<configuration>
-							<outputDirectory>src/main/python</outputDirectory>
-						</configuration>
+						<id>grpc-python</id>
 					</execution>
 				</executions>
 			</plugin>
@@ -238,10 +253,13 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputFile>${project.basedir}/${project.build.finalName}-${git.commit.id.describe-short}.jar</outputFile>
+							<outputFile>
+								${project.basedir}/${project.build.finalName}-${git.commit.id.describe-short}.jar
+							</outputFile>
 							<transformers>
 								<!-- The following sets the main class for the executable jar as you otherwise would with the assembly plugin -->
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
 										<Main-Class>${main.class}</Main-Class>
 										<Specification-Vendor>org.matsim</Specification-Vendor>
@@ -252,7 +270,8 @@
 									</manifestEntries>
 								</transformer>
 								<!-- The following merges the various GeoTools META-INF/services files         -->
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
 							</transformers>
 							<filters>
 								<filter>

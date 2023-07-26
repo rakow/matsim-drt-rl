@@ -1,0 +1,4 @@
+protobuf>=4.23.4
+grpcio>=1.42.0
+grpcio-tools>=1.42.0
+mushroom_rl>=1.9.2
