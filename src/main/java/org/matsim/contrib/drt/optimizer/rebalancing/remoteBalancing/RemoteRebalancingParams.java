@@ -13,9 +13,9 @@ public class RemoteRebalancingParams extends ReflectiveConfigGroupWithConfigurab
 	public static final String SET_NAME = "remoteRebalancingStrategyParams";
 
 	@Parameter
-	@Comment("The address (host + port) of the rebalancing server")
+	@Comment("Port on which to listen for connections")
 	@NotNull
-	private String address = "tcp://localhost:5555";
+	public int port = 5555;
 
 
 	public RemoteRebalancingParams() {

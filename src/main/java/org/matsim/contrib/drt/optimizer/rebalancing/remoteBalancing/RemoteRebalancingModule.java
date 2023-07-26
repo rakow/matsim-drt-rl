@@ -50,6 +50,7 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 
 		RemoteRebalancingParams strategyParams = (RemoteRebalancingParams) params.getRebalancingStrategyParams();
 
+		bindModal(RemoteRebalancingParams.class).toInstance(strategyParams);
 		addControlerListenerBinding().toProvider(modalProvider(getter -> getter.getModal(RemoteRebalancingConnectionManager.class))).asEagerSingleton();
 
 		installQSimModule(new AbstractDvrpModeQSimModule(this.getMode()) {
