@@ -1,9 +1,0 @@
-syntax = "proto3";
-option java_package = "org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server";
-
-/*
-  Server running within MATSim and accepting rebalancing input
- */
-service RebalancingStrategy {
-
-}

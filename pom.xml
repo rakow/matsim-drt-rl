@@ -201,9 +201,9 @@
 						<argument>-m</argument>
 						<argument>grpc_tools.protoc</argument>
 						<argument>-Isrc/main/proto</argument>
-						<argument>--python_out=src/main/python/drtrl/server</argument>
-						<argument>--grpc_python_out=src/main/python/drtrl/server</argument>
-						<argument>src/main/proto/rebalancer.proto</argument>
+						<argument>--python_out=src/main/python</argument>
+						<argument>--grpc_python_out=src/main/python</argument>
+						<argument>src/main/proto/drtrl/server/rebalancer.proto</argument>
 					</arguments>
 				</configuration>
 				<executions>

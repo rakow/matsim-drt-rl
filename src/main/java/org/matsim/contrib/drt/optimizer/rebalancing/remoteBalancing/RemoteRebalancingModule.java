@@ -62,18 +62,18 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 					getter.getModal(DrtZoneTargetLinkSelector.class)))).asEagerSingleton();
 		}
 
-		bindModal(RemoteConnectionManager.class).toProvider(modalProvider(getter -> new ConnectionManagerImpl(
+		bindModal(ConnectionManager.class).toProvider(modalProvider(getter -> new ConnectionManager(
 			port, params, getter.getModal(DrtZonalSystem.class), getter.getModal(FleetSpecification.class)
 		))).asEagerSingleton();
 
-		addControlerListenerBinding().to(modalKey(RemoteConnectionManager.class));
+		addControlerListenerBinding().to(modalKey(ConnectionManager.class));
 
 		installQSimModule(new AbstractDvrpModeQSimModule(this.getMode()) {
 			@Override
 			protected void configureQSim() {
 				bindModal(RebalancingStrategy.class).toProvider(modalProvider(
 					getter -> new RemoteRebalancingStrategy(
-						getter.getModal(RemoteConnectionManager.class),
+						getter.getModal(ConnectionManager.class),
 						getter.getModal(DrtZonalSystem.class),
 						getter.getModal(Fleet.class),
 						getter.getModal(ZonalRelocationCalculator.class),

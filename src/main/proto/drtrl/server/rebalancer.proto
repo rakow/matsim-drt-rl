@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+option java_package = "org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server";
+
+package drtrl.server;
+
+/*
+  Message without content.
+ */
+message Empty {}
+
+/*
+  Information about one single zone.
+ */
+message Zone {
+
+  /*
+    unique id
+   */
+  string id = 1;
+
+  /*
+     x-coordinate of the centroid.
+   */
+  double centroidX = 2;
+  /*
+     y-coordinate of the centroid.
+   */
+  double centroidY = 3;
+
+}
+
+/*
+  Specification of rebalancing problem.
+ */
+message RebalancingSpecification {
+
+  /*
+    rebalancing interval in seconds.
+   */
+  int32 interval = 1;
+
+  /*
+    number of drt vehicles.
+   */
+  int32 fleetSize = 2;
+
+  /*
+    zone specification.
+   */
+  repeated Zone zones = 3;
+}
+
+/*
+  Holding current simulation time.
+ */
+message CurrentTime {
+  /*
+    Simulation time.
+  */
+  int32 currentTime = 1;
+
+  /*
+  Indicates end of simulation.
+  */
+  bool simulationEnded = 2;
+}
+
+/*
+  Instructions for the server on how to rebalance.
+ */
+message RebalancingInstructions {
+
+  /*
+    Time for which instructions are valid.
+   */
+  int32 currentTime = 1;
+
+}
+
+/*
+   Current state of the system.
+ */
+message RebalancingState {
+
+  // TODO: rebalancable vehicles per zone
+
+
+}
+
+/*
+  Server running within MATSim and accepting rebalancing input.
+ */
+service RebalancingStrategy {
+
+  /*
+     Return the specification of the rebalancing problem.
+   */
+  rpc GetSpecification(Empty) returns (RebalancingSpecification) {}
+
+  /*
+    Wait for the state at specified time.
+   */
+  rpc GetCurrentState(CurrentTime) returns (RebalancingState) {}
+
+  /*
+    Perform the rebalancing and block until next time step.
+   */
+  rpc PerformRebalancing(RebalancingInstructions) returns (CurrentTime) {}
+
+}

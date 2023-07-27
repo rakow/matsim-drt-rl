@@ -2,13 +2,12 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
+from drtrl.server import rebalancer_pb2 as drtrl_dot_server_dot_rebalancer__pb2
 
 
 class RebalancingStrategyStub(object):
-    """TODO naming because the server only accepts the reblancing
-
-
-    Server running within MATSim and accepting rebalancing input
+    """
+    Server running within MATSim and accepting rebalancing input.
     """
 
     def __init__(self, channel):
@@ -17,28 +16,129 @@ class RebalancingStrategyStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.GetSpecification = channel.unary_unary(
+                '/drtrl.server.RebalancingStrategy/GetSpecification',
+                request_serializer=drtrl_dot_server_dot_rebalancer__pb2.Empty.SerializeToString,
+                response_deserializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingSpecification.FromString,
+                )
+        self.GetCurrentState = channel.unary_unary(
+                '/drtrl.server.RebalancingStrategy/GetCurrentState',
+                request_serializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.SerializeToString,
+                response_deserializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingState.FromString,
+                )
+        self.PerformRebalancing = channel.unary_unary(
+                '/drtrl.server.RebalancingStrategy/PerformRebalancing',
+                request_serializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingInstructions.SerializeToString,
+                response_deserializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.FromString,
+                )
 
 
 class RebalancingStrategyServicer(object):
-    """TODO naming because the server only accepts the reblancing
-
-
-    Server running within MATSim and accepting rebalancing input
     """
+    Server running within MATSim and accepting rebalancing input.
+    """
+
+    def GetSpecification(self, request, context):
+        """
+        Return the specification of the rebalancing problem.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCurrentState(self, request, context):
+        """
+        Wait for the state at specified time.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def PerformRebalancing(self, request, context):
+        """
+        Perform the rebalancing and block until next time step.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_RebalancingStrategyServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'GetSpecification': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSpecification,
+                    request_deserializer=drtrl_dot_server_dot_rebalancer__pb2.Empty.FromString,
+                    response_serializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingSpecification.SerializeToString,
+            ),
+            'GetCurrentState': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCurrentState,
+                    request_deserializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.FromString,
+                    response_serializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingState.SerializeToString,
+            ),
+            'PerformRebalancing': grpc.unary_unary_rpc_method_handler(
+                    servicer.PerformRebalancing,
+                    request_deserializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingInstructions.FromString,
+                    response_serializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'RebalancingStrategy', rpc_method_handlers)
+            'drtrl.server.RebalancingStrategy', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
 class RebalancingStrategy(object):
-    """TODO naming because the server only accepts the reblancing
-
-
-    Server running within MATSim and accepting rebalancing input
     """
+    Server running within MATSim and accepting rebalancing input.
+    """
+
+    @staticmethod
+    def GetSpecification(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/drtrl.server.RebalancingStrategy/GetSpecification',
+            drtrl_dot_server_dot_rebalancer__pb2.Empty.SerializeToString,
+            drtrl_dot_server_dot_rebalancer__pb2.RebalancingSpecification.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetCurrentState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/drtrl.server.RebalancingStrategy/GetCurrentState',
+            drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.SerializeToString,
+            drtrl_dot_server_dot_rebalancer__pb2.RebalancingState.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def PerformRebalancing(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/drtrl.server.RebalancingStrategy/PerformRebalancing',
+            drtrl_dot_server_dot_rebalancer__pb2.RebalancingInstructions.SerializeToString,
+            drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

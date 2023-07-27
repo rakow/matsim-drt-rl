@@ -7,6 +7,7 @@ import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingStrategy;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingUtils;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.AggregatedMinCostRelocationCalculator;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.ZonalRelocationCalculator;
+import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server.Rebalancer;
 import org.matsim.contrib.dvrp.fleet.DvrpVehicle;
 import org.matsim.contrib.dvrp.fleet.Fleet;
 
@@ -22,13 +23,13 @@ import static java.util.stream.Collectors.toList;
  */
 public class RemoteRebalancingStrategy implements RebalancingStrategy {
 
-	private final RemoteConnectionManager server;
+	private final ConnectionManager server;
 	private final DrtZonalSystem zonalSystem;
 	private final Fleet fleet;
 	private final ZonalRelocationCalculator relocationCalculator;
 	private final RebalancingParams params;
 
-	public RemoteRebalancingStrategy(RemoteConnectionManager server, DrtZonalSystem zonalSystem, Fleet fleet,
+	public RemoteRebalancingStrategy(ConnectionManager server, DrtZonalSystem zonalSystem, Fleet fleet,
 									 ZonalRelocationCalculator relocationCalculator, RebalancingParams params) {
 		this.server = server;
 		this.zonalSystem = zonalSystem;
@@ -43,12 +44,15 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 		Map<DrtZone, List<DvrpVehicle>> rebalancableVehiclesPerZone = RebalancingUtils.groupRebalancableVehicles(
 			zonalSystem, params, rebalancableVehicles, time);
 
-		if (rebalancableVehiclesPerZone.isEmpty()) {
-			return List.of();
-		}
-
 		Map<DrtZone, List<DvrpVehicle>> soonIdleVehiclesPerZone = RebalancingUtils.groupSoonIdleVehicles(zonalSystem,
 			params, fleet, time);
+
+		// set current state for the server
+		Rebalancer.RebalancingState.Builder state = Rebalancer.RebalancingState.newBuilder();
+
+		server.setCurrentState(time, state.build());
+
+		server.waitForInstructions(time);
 
 		// TODO: call server, how to gather current statistics?
 

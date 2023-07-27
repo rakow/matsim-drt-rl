@@ -7,6 +7,7 @@ from mushroom_rl.core import Environment, MDPInfo
 from mushroom_rl.utils.spaces import Box
 
 from .server.rebalancer_pb2_grpc import RebalancingStrategyStub
+from .server.rebalancer_pb2 import Empty
 
 class DrtEnvironment(Environment):
     """ Environment for DRT Rebalancing"""
@@ -16,6 +17,9 @@ class DrtEnvironment(Environment):
         channel = grpc.insecure_channel(server)
         stub = RebalancingStrategyStub(channel)
 
+        print("Connecting to %s..." % server)
+        spec = stub.GetSpecification(Empty(), wait_for_ready=True)
+        print(spec)
 
         # only time is observed
         self.observation_space = Box(low=0, high=1, shape=(1,))
