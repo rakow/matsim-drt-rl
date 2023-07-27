@@ -70,6 +70,19 @@
 			<version>${matsim.version}</version>
 		</dependency>
 
+		<!-- Patch unhelpful DRT classes -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>1.14.5</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy-agent</artifactId>
+			<version>1.14.5</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<!-- Server communication -->
 		<dependency>

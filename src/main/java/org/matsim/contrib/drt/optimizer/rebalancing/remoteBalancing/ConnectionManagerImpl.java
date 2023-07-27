@@ -2,17 +2,18 @@ package org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import jakarta.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
+import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingParams;
 import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server.RebalancingStrategyGrpc;
+import org.matsim.contrib.dvrp.fleet.Fleet;
+import org.matsim.contrib.dvrp.fleet.FleetSpecification;
 import org.matsim.core.controler.events.IterationEndsEvent;
 import org.matsim.core.controler.events.IterationStartsEvent;
 import org.matsim.core.controler.events.ShutdownEvent;
 import org.matsim.core.controler.events.StartupEvent;
-import org.matsim.core.controler.listener.IterationEndsListener;
-import org.matsim.core.controler.listener.IterationStartsListener;
-import org.matsim.core.controler.listener.ShutdownListener;
-import org.matsim.core.controler.listener.StartupListener;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -20,27 +21,32 @@ import java.io.UncheckedIOException;
 /**
  * Handles connection and lifecycle to the remote server.
  */
-public class RemoteRebalancingConnectionManager extends RebalancingStrategyGrpc.RebalancingStrategyImplBase implements StartupListener, ShutdownListener, IterationStartsListener, IterationEndsListener {
+final class ConnectionManagerImpl extends RebalancingStrategyGrpc.RebalancingStrategyImplBase implements RemoteConnectionManager {
 
-	private static final Logger log = LogManager.getLogger(RemoteRebalancingConnectionManager.class);
+	private static final Logger log = LogManager.getLogger(ConnectionManagerImpl.class);
 
+	private final int port;
+	private final RebalancingParams params;
+	private final DrtZonalSystem zonalSystem;
+	private final FleetSpecification fleet;
 
-	private final RemoteRebalancingParams params;
-
-	public RemoteRebalancingConnectionManager(RemoteRebalancingParams params) {
+	public ConnectionManagerImpl(int port, RebalancingParams params, DrtZonalSystem zonalSystem, FleetSpecification fleet) {
+		this.port = port;
 		this.params = params;
+		this.zonalSystem = zonalSystem;
+		this.fleet = fleet;
 	}
 
 	@Override
 	public void notifyStartup(StartupEvent startupEvent) {
 
-		Server server = ServerBuilder.forPort(params.port)
+		Server server = ServerBuilder.forPort(port)
 			.addService(this)
 			.build();
 
 		try {
 			server.start();
-			log.info("Running server on port {} ...", params.port);
+			log.info("Running server on port {} ...", port);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

@@ -20,12 +20,15 @@
 
 package org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing;
 
+import org.matsim.contrib.drt.analysis.zonal.DrtModeZonalSystemModule;
 import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
+import org.matsim.contrib.drt.analysis.zonal.DrtZoneTargetLinkSelector;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingParams;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingStrategy;
+import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.AggregatedMinCostRelocationCalculator;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.ZonalRelocationCalculator;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
-import org.matsim.contrib.dvrp.fleet.Fleet;
+import org.matsim.contrib.dvrp.fleet.FleetSpecification;
 import org.matsim.contrib.dvrp.run.AbstractDvrpModeModule;
 import org.matsim.contrib.dvrp.run.AbstractDvrpModeQSimModule;
 
@@ -36,11 +39,13 @@ import org.matsim.contrib.dvrp.run.AbstractDvrpModeQSimModule;
 public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 
 	private final DrtConfigGroup drtCfg;
+	private final int port;
 
 
-	public RemoteRebalancingModule(DrtConfigGroup drtCfg) {
+	public RemoteRebalancingModule(DrtConfigGroup drtCfg, int port) {
 		super(drtCfg.getMode());
 		this.drtCfg = drtCfg;
+		this.port = port;
 	}
 
 
@@ -48,19 +53,28 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 	public void install() {
 		RebalancingParams params = drtCfg.getRebalancingParams().orElseThrow();
 
-		RemoteRebalancingParams strategyParams = (RemoteRebalancingParams) params.getRebalancingStrategyParams();
+		// Is only needed because it is not bound via the normal rebalancing
+		{
+			install(new DrtModeZonalSystemModule(drtCfg));
+			bindModal(ZonalRelocationCalculator.class).toProvider(modalProvider(
+				getter -> new AggregatedMinCostRelocationCalculator(
+					getter.getModal(DrtZoneTargetLinkSelector.class)))).asEagerSingleton();
+		}
 
-		bindModal(RemoteRebalancingParams.class).toInstance(strategyParams);
-		addControlerListenerBinding().toProvider(modalProvider(getter -> getter.getModal(RemoteRebalancingConnectionManager.class))).asEagerSingleton();
+		bindModal(RemoteConnectionManager.class).toProvider(modalProvider(getter -> new ConnectionManagerImpl(
+			port, params, getter.getModal(DrtZonalSystem.class), getter.getModal(FleetSpecification.class)
+		))).asEagerSingleton();
+
+		addControlerListenerBinding().to(modalKey(RemoteConnectionManager.class));
 
 		installQSimModule(new AbstractDvrpModeQSimModule(this.getMode()) {
 			@Override
 			protected void configureQSim() {
 				bindModal(RebalancingStrategy.class).toProvider(modalProvider(
 					getter -> new RemoteRebalancingStrategy(
-						getter.getModal(RemoteRebalancingConnectionManager.class),
+						getter.getModal(RemoteConnectionManager.class),
 						getter.getModal(DrtZonalSystem.class),
-						getter.getModal(Fleet.class),
+						getter.getModal(FleetSpecification.class),
 						getter.getModal(ZonalRelocationCalculator.class)))).asEagerSingleton();
 			}
 		});

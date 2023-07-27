@@ -4,7 +4,7 @@ import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingStrategy;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.ZonalRelocationCalculator;
 import org.matsim.contrib.dvrp.fleet.DvrpVehicle;
-import org.matsim.contrib.dvrp.fleet.Fleet;
+import org.matsim.contrib.dvrp.fleet.FleetSpecification;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -15,8 +15,8 @@ import java.util.stream.Stream;
  */
 public class RemoteRebalancingStrategy implements RebalancingStrategy {
 
-	public RemoteRebalancingStrategy(RemoteRebalancingConnectionManager server, DrtZonalSystem zonalSystem,
-									 Fleet fleet, ZonalRelocationCalculator relocationCalculator) {
+	public RemoteRebalancingStrategy(RemoteConnectionManager server, DrtZonalSystem zonalSystem,
+									 FleetSpecification fleet, ZonalRelocationCalculator relocationCalculator) {
 	}
 
 	@Override
