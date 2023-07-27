@@ -2,13 +2,11 @@ package org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import jakarta.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingParams;
 import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server.RebalancingStrategyGrpc;
-import org.matsim.contrib.dvrp.fleet.Fleet;
 import org.matsim.contrib.dvrp.fleet.FleetSpecification;
 import org.matsim.core.controler.events.IterationEndsEvent;
 import org.matsim.core.controler.events.IterationStartsEvent;
@@ -17,6 +15,7 @@ import org.matsim.core.controler.events.StartupEvent;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Handles connection and lifecycle to the remote server.
@@ -29,6 +28,7 @@ final class ConnectionManagerImpl extends RebalancingStrategyGrpc.RebalancingStr
 	private final RebalancingParams params;
 	private final DrtZonalSystem zonalSystem;
 	private final FleetSpecification fleet;
+	private Server server;
 
 	public ConnectionManagerImpl(int port, RebalancingParams params, DrtZonalSystem zonalSystem, FleetSpecification fleet) {
 		this.port = port;
@@ -55,7 +55,12 @@ final class ConnectionManagerImpl extends RebalancingStrategyGrpc.RebalancingStr
 
 	@Override
 	public void notifyShutdown(ShutdownEvent shutdownEvent) {
-
+		server.shutdown();
+		try {
+			server.awaitTermination(5, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

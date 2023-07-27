@@ -28,6 +28,7 @@ import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingStrategy;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.AggregatedMinCostRelocationCalculator;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.ZonalRelocationCalculator;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
+import org.matsim.contrib.dvrp.fleet.Fleet;
 import org.matsim.contrib.dvrp.fleet.FleetSpecification;
 import org.matsim.contrib.dvrp.run.AbstractDvrpModeModule;
 import org.matsim.contrib.dvrp.run.AbstractDvrpModeQSimModule;
@@ -74,8 +75,9 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 					getter -> new RemoteRebalancingStrategy(
 						getter.getModal(RemoteConnectionManager.class),
 						getter.getModal(DrtZonalSystem.class),
-						getter.getModal(FleetSpecification.class),
-						getter.getModal(ZonalRelocationCalculator.class)))).asEagerSingleton();
+						getter.getModal(Fleet.class),
+						getter.getModal(ZonalRelocationCalculator.class),
+						params))).asEagerSingleton();
 			}
 		});
 	}
