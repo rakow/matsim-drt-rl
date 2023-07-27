@@ -23,13 +23,13 @@ class RebalancingStrategyStub(object):
                 )
         self.GetCurrentState = channel.unary_unary(
                 '/drtrl.server.RebalancingStrategy/GetCurrentState',
-                request_serializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.SerializeToString,
+                request_serializer=drtrl_dot_server_dot_rebalancer__pb2.SimulationTime.SerializeToString,
                 response_deserializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingState.FromString,
                 )
         self.PerformRebalancing = channel.unary_unary(
                 '/drtrl.server.RebalancingStrategy/PerformRebalancing',
                 request_serializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingInstructions.SerializeToString,
-                response_deserializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.FromString,
+                response_deserializer=drtrl_dot_server_dot_rebalancer__pb2.SimulationTime.FromString,
                 )
 
 
@@ -72,13 +72,13 @@ def add_RebalancingStrategyServicer_to_server(servicer, server):
             ),
             'GetCurrentState': grpc.unary_unary_rpc_method_handler(
                     servicer.GetCurrentState,
-                    request_deserializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.FromString,
+                    request_deserializer=drtrl_dot_server_dot_rebalancer__pb2.SimulationTime.FromString,
                     response_serializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingState.SerializeToString,
             ),
             'PerformRebalancing': grpc.unary_unary_rpc_method_handler(
                     servicer.PerformRebalancing,
                     request_deserializer=drtrl_dot_server_dot_rebalancer__pb2.RebalancingInstructions.FromString,
-                    response_serializer=drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.SerializeToString,
+                    response_serializer=drtrl_dot_server_dot_rebalancer__pb2.SimulationTime.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -121,7 +121,7 @@ class RebalancingStrategy(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/drtrl.server.RebalancingStrategy/GetCurrentState',
-            drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.SerializeToString,
+            drtrl_dot_server_dot_rebalancer__pb2.SimulationTime.SerializeToString,
             drtrl_dot_server_dot_rebalancer__pb2.RebalancingState.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -139,6 +139,6 @@ class RebalancingStrategy(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/drtrl.server.RebalancingStrategy/PerformRebalancing',
             drtrl_dot_server_dot_rebalancer__pb2.RebalancingInstructions.SerializeToString,
-            drtrl_dot_server_dot_rebalancer__pb2.CurrentTime.FromString,
+            drtrl_dot_server_dot_rebalancer__pb2.SimulationTime.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

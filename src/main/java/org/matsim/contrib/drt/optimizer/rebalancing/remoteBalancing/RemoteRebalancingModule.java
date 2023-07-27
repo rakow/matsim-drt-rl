@@ -20,6 +20,7 @@
 
 package org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing;
 
+import org.matsim.contrib.drt.analysis.DrtEventSequenceCollector;
 import org.matsim.contrib.drt.analysis.zonal.DrtModeZonalSystemModule;
 import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
 import org.matsim.contrib.drt.analysis.zonal.DrtZoneTargetLinkSelector;
@@ -32,6 +33,7 @@ import org.matsim.contrib.dvrp.fleet.Fleet;
 import org.matsim.contrib.dvrp.fleet.FleetSpecification;
 import org.matsim.contrib.dvrp.run.AbstractDvrpModeModule;
 import org.matsim.contrib.dvrp.run.AbstractDvrpModeQSimModule;
+import org.matsim.core.config.Config;
 
 
 /**
@@ -63,7 +65,7 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 		}
 
 		bindModal(ConnectionManager.class).toProvider(modalProvider(getter -> new ConnectionManager(
-			port, params, getter.getModal(DrtZonalSystem.class), getter.getModal(FleetSpecification.class)
+			port, getter.get(Config.class), params, getter.getModal(DrtZonalSystem.class), getter.getModal(FleetSpecification.class), getter.getModal(DrtEventSequenceCollector.class)
 		))).asEagerSingleton();
 
 		addControlerListenerBinding().to(modalKey(ConnectionManager.class));
