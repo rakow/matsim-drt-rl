@@ -20,7 +20,7 @@ class DrtEnvironment(Environment):
         self.spec = self.server.GetSpecification(Empty(), wait_for_ready=True)
 
         # only time is observed
-        self.observation_space = Box(low=0, high=1, shape=(1,))
+        self.observation_space = Box(low=0, high=1, shape=(2,))
         self.action_space = Box(low=0, high=self.spec.fleetSize, shape=(len(self.spec.zones),))
 
         mdp_info = MDPInfo(self.observation_space, self.action_space, gamma=0.99, horizon=100)
@@ -39,6 +39,7 @@ class DrtEnvironment(Environment):
         response = self.server.PerformRebalancing(target)
 
         self._state[0] = response.time
+        self._state[1] = response.time
 
         state = self.server.GetCurrentState(response)
 
@@ -50,7 +51,11 @@ class DrtEnvironment(Environment):
         # Wait for initial state
         current_state = self.server.GetCurrentState(SimulationTime())
 
-        self._state = np.zeros(1)
+        if state is None:
+            self._state = np.zeros(2)
+        else:
+            self._state = state
+            self._state[0] = 0
 
         return self._state
 

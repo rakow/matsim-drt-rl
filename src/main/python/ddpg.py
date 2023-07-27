@@ -119,7 +119,7 @@ if __name__ == "__main__":
     core = Core(agent, env)
 
     # Fill the replay memory with random samples
-    core.learn(n_steps=initial_replay_size, n_steps_per_fit=initial_replay_size)
+    core.learn(n_episodes=5, n_episodes_per_fit=5)
 
     # RUN
     n_epochs = env.spec.iterations - 5
@@ -131,5 +131,5 @@ if __name__ == "__main__":
 
     for n in range(n_epochs):
         print('Epoch: ', n + 1)
-        core.learn(n_steps=1, n_episodes_per_fit=1, render=False)
+        core.learn(n_episodes=1, n_episodes_per_fit=1, render=False)
         # dataset = core.evaluate(n_steps=n_steps_test, render=False)

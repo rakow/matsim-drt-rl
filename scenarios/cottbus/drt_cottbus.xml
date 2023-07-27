@@ -91,7 +91,7 @@
 		<param name="outputDirectory" value="output/cottbus/" />
 		<param name="overwriteFiles" value="overwriteExistingFiles" />
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="10" />
+		<param name="lastIteration" value="50" />
 	</module>
 
 	<module name="planCalcScore">
