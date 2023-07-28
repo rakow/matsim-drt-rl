@@ -168,21 +168,26 @@ message RebalancingState {
   repeated DrtRequest rejectedRequests = 4;
 
   /*
+    Expected demand for current time step in order of zones.
+   */
+  repeated double expectedDemand = 5;
+
+  /*
     Waiting time statistics within last timestep.
    */
-  Stats waitingTime = 5;
+  Stats waitingTime = 6;
 
   /*
     Travel time statis for performed requests.
    */
-  Stats travelTime = 6;
+  Stats travelTime = 7;
 
   // TODO: fleet driven km
 
   /*
     Indicates end of simulation.
   */
-  bool simulationEnded = 7;
+  bool simulationEnded = 8;
 
 }
 

@@ -30,6 +30,7 @@ import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Handles connection and lifecycle to the remote server.
@@ -247,8 +248,16 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 			}
 		}
 
-		for (DrtEventSequenceCollector.EventSequence request : drtEvents.getRejectedRequestSequences().values())
-			state.addPerformedRequest(convert(request));
+		for (DrtEventSequenceCollector.EventSequence request : drtEvents.getRejectedRequestSequences().values()) {
+			if (request.getSubmitted().getTime() > time - params.interval)
+				state.addRejectedRequests(convert(request));
+		}
+
+		// Fill expected demand
+		ToDoubleFunction<DrtZone> demand = zonalDemand.getExpectedDemand(time, params.interval);
+		for (DrtZone zone : zonalSystem.getZones().values()) {
+			state.addExpectedDemand(demand.applyAsDouble(zone));
+		}
 
 		state.setSimulationTime(time);
 		state.setWaitingTime(convert(waitingTime));

@@ -15,6 +15,7 @@ class DrtEnvironment(Environment):
     def __init__(self, server):
         channel = grpc.insecure_channel(server)
         self.server = RebalancingStrategyStub(channel)
+        self.time = 0
 
         print("Connecting to %s..." % server)
         self.spec = self.server.GetSpecification(Empty(), wait_for_ready=True)
@@ -33,12 +34,13 @@ class DrtEnvironment(Environment):
             cmd.zoneTargets.vehicles.append(max(0, int(a)))
 
         # submit current time
-        cmd.currentTime = int(self._state[0])
+        cmd.currentTime = int(self.time)
 
         response = self.server.PerformRebalancing(cmd)
 
-        self._state[0] = response.time
-        self._state[1] = response.time
+        self.time = response.time
+        self._state[0] = response.time / self.spec.endTime
+        self._state[1] = response.time / self.spec.endTime
 
         state = self.server.GetCurrentState(response)
 
@@ -50,11 +52,14 @@ class DrtEnvironment(Environment):
         # Wait for initial state
         current_state = self.server.GetCurrentState(SimulationTime())
 
+        self.time = 0
+
         if state is None:
             self._state = np.zeros(2)
         else:
             self._state = state
             self._state[0] = 0
+            self._state[1] = 0
 
         return self._state
 
