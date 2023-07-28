@@ -97,7 +97,7 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 	@Override
 	public void notifyStartup(StartupEvent startupEvent) {
 
-		Server server = ServerBuilder.forPort(port)
+		server = ServerBuilder.forPort(port)
 			.addService(this)
 			.build();
 
@@ -115,7 +115,7 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 		try {
 			server.awaitTermination(5, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			log.warn("Error shutting down server", e);
 		}
 	}
 

@@ -29,7 +29,6 @@ class DrtEnvironment(Environment):
     def step(self, action):
 
         target = RebalancingInstructions()
-
         for a in action:
             target.targets.append(max(0, int(a)))
 
