@@ -26,8 +26,12 @@ import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
 import org.matsim.contrib.drt.analysis.zonal.DrtZoneTargetLinkSelector;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingParams;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingStrategy;
+import org.matsim.contrib.drt.optimizer.rebalancing.demandestimator.PreviousIterationDrtDemandEstimator;
+import org.matsim.contrib.drt.optimizer.rebalancing.demandestimator.ZonalDemandEstimator;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.AggregatedMinCostRelocationCalculator;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.ZonalRelocationCalculator;
+import org.matsim.contrib.drt.optimizer.rebalancing.targetcalculator.DemandEstimatorAsTargetCalculator;
+import org.matsim.contrib.drt.optimizer.rebalancing.targetcalculator.RebalancingTargetCalculator;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
 import org.matsim.contrib.dvrp.fleet.Fleet;
 import org.matsim.contrib.dvrp.fleet.FleetSpecification;
@@ -64,11 +68,21 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 					getter.getModal(DrtZoneTargetLinkSelector.class)))).asEagerSingleton();
 		}
 
+		bindModal(PreviousIterationDrtDemandEstimator.class).toProvider(modalProvider(
+			getter -> new PreviousIterationDrtDemandEstimator(getter.getModal(DrtZonalSystem.class), drtCfg, params.interval))).asEagerSingleton();
+		bindModal(ZonalDemandEstimator.class).to(modalKey(PreviousIterationDrtDemandEstimator.class));
+		addEventHandlerBinding().to(modalKey(PreviousIterationDrtDemandEstimator.class));
+
 		bindModal(ConnectionManager.class).toProvider(modalProvider(getter -> new ConnectionManager(
-			port, getter.get(Config.class), params, getter.getModal(DrtZonalSystem.class), getter.getModal(FleetSpecification.class), getter.getModal(DrtEventSequenceCollector.class)
+			port, getter.get(Config.class), params, getter.getModal(DrtZonalSystem.class),
+			getter.getModal(FleetSpecification.class), getter.getModal(DrtEventSequenceCollector.class), getter.getModal(ZonalDemandEstimator.class)
 		))).asEagerSingleton();
 
 		addControlerListenerBinding().to(modalKey(ConnectionManager.class));
+
+		// Only used with min cost flow
+		bindModal(RebalancingTargetCalculator.class).toProvider(modalProvider(getter -> new DemandEstimatorAsTargetCalculator(
+			getter.getModal(ZonalDemandEstimator.class), params.interval))).asEagerSingleton();
 
 		installQSimModule(new AbstractDvrpModeQSimModule(this.getMode()) {
 			@Override
@@ -78,6 +92,7 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 						getter.getModal(ConnectionManager.class),
 						getter.getModal(DrtZonalSystem.class),
 						getter.getModal(Fleet.class),
+						getter.getModal(RebalancingTargetCalculator.class),
 						getter.getModal(ZonalRelocationCalculator.class),
 						params))).asEagerSingleton();
 			}

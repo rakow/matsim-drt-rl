@@ -106,9 +106,37 @@ message RebalancingInstructions {
   int32 currentTime = 1;
 
   /*
-    Target values in same order as zones.
+    Rebalance in one of the following ways.
    */
-  repeated int32 targets = 2;
+  // TODO: oneof is not working, seems to be a bug in grpc
+  //oneof rebalance {
+    /*
+      Rebalance by using target values.
+     */
+    ZoneTargets zoneTargets = 2;
+    /*
+      Use min cost flow with alpha and beta parameter.
+     */
+    MinCostFlow minCostFlow = 3;
+  //}
+
+  /*
+  Rebalance using zone targets.
+ */
+  message ZoneTargets {
+    /*
+     Target values in same order as zones.
+    */
+    repeated int32 vehicles = 1;
+  }
+
+  /*
+    Rebalance using min cost flow.
+   */
+  message MinCostFlow {
+    double alpha = 1;
+    double beta = 2;
+  }
 
 }
 

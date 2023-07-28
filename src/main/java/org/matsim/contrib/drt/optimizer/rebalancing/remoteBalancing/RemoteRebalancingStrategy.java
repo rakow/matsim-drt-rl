@@ -10,13 +10,17 @@ import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingUtils;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.AggregatedMinCostRelocationCalculator;
 import org.matsim.contrib.drt.optimizer.rebalancing.mincostflow.ZonalRelocationCalculator;
 import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server.Rebalancer;
+import org.matsim.contrib.drt.optimizer.rebalancing.targetcalculator.RebalancingTargetCalculator;
 import org.matsim.contrib.dvrp.fleet.DvrpVehicle;
 import org.matsim.contrib.dvrp.fleet.Fleet;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -29,14 +33,18 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 	private final ConnectionManager server;
 	private final DrtZonalSystem zonalSystem;
 	private final Fleet fleet;
+	private final RebalancingTargetCalculator rebalancingTargetCalculator;
 	private final ZonalRelocationCalculator relocationCalculator;
 	private final RebalancingParams params;
 
 	public RemoteRebalancingStrategy(ConnectionManager server, DrtZonalSystem zonalSystem, Fleet fleet,
-									 ZonalRelocationCalculator relocationCalculator, RebalancingParams params) {
+									 RebalancingTargetCalculator rebalancingTargetCalculator,
+									 ZonalRelocationCalculator relocationCalculator,
+									 RebalancingParams params) {
 		this.server = server;
 		this.zonalSystem = zonalSystem;
 		this.fleet = fleet;
+		this.rebalancingTargetCalculator = rebalancingTargetCalculator;
 		this.relocationCalculator = relocationCalculator;
 		this.params = params;
 	}
@@ -56,17 +64,33 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 		if (state.getSimulationEnded())
 			return List.of();
 
-		List<AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus> surpluses = new ArrayList<>();
-		Rebalancer.RebalancingInstructions targets = server.waitForInstructions(time);
+		Rebalancer.RebalancingInstructions cmd = server.waitForInstructions(time);
 
-		if (targets.getTargetsCount() != zonalSystem.getZones().size()) {
-			log.error("Invalid number of targets in rebalancing instruction: {}", targets.getTargetsCount());
+		if (cmd.hasZoneTargets()) {
+			return calculateRebalanceTargets(cmd.getZoneTargets(), rebalancableVehiclesPerZone, soonIdleVehiclesPerZone);
+		} else if (cmd.hasMinCostFlow()) {
+			return calculateMinCostRelocations(cmd.getMinCostFlow(), time, rebalancableVehiclesPerZone, soonIdleVehiclesPerZone);
+		}
+
+
+		log.warn("No rebalancing method was given.");
+		return List.of();
+	}
+
+
+	private List<Relocation> calculateRebalanceTargets(Rebalancer.RebalancingInstructions.ZoneTargets targets,
+													   Map<DrtZone, List<DvrpVehicle>> rebalancableVehiclesPerZone,
+													   Map<DrtZone, List<DvrpVehicle>> soonIdleVehiclesPerZone) {
+		if (targets.getVehiclesCount() != zonalSystem.getZones().size()) {
+			log.error("Invalid number of targets in rebalancing instruction: {}", targets.getVehiclesCount());
 			return List.of();
 		}
 
+		List<AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus> surpluses = new ArrayList<>();
+
 		int i = 0;
 		for (DrtZone z : zonalSystem.getZones().values()) {
-			int target = targets.getTargets(i++);
+			int target = targets.getVehicles(i++);
 
 			int rebalancable = rebalancableVehiclesPerZone.getOrDefault(z, List.of()).size();
 			int soonIdle = soonIdleVehiclesPerZone.getOrDefault(z, List.of()).size();
@@ -79,4 +103,25 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 
 		return relocationCalculator.calcRelocations(surpluses, rebalancableVehiclesPerZone);
 	}
+
+	private List<Relocation> calculateMinCostRelocations(Rebalancer.RebalancingInstructions.MinCostFlow minCostFlow, double time,
+														 Map<DrtZone, List<DvrpVehicle>> rebalancableVehiclesPerZone,
+														 Map<DrtZone, List<DvrpVehicle>> soonIdleVehiclesPerZone) {
+
+		ToDoubleFunction<DrtZone> targetFunction = rebalancingTargetCalculator.calculate(time, rebalancableVehiclesPerZone);
+		double alpha = minCostFlow.getAlpha();
+		double beta = minCostFlow.getBeta();
+
+		List<AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus> vehicleSurpluses = zonalSystem.getZones().values().stream().map(z -> {
+			int rebalancable = rebalancableVehiclesPerZone.getOrDefault(z, List.of()).size();
+			int soonIdle = soonIdleVehiclesPerZone.getOrDefault(z, List.of()).size();
+			int target = (int) Math.floor(alpha * targetFunction.applyAsDouble(z) + beta);
+			int surplus = Math.min(rebalancable + soonIdle - target, rebalancable);
+			return new AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus(z, surplus);
+		}).collect(toList());
+
+		return relocationCalculator.calcRelocations(vehicleSurpluses, rebalancableVehiclesPerZone);
+	}
+
+
 }

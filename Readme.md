@@ -15,3 +15,6 @@ pip install -r src/main/python/requirements.txt
 `
 
 ## Running scenarios
+
+Run the java class `org.matsim.run.RunDrtRLScenario` to start the MATSim run. 
+Start the python process in parallel, it will send rebalancing instructions to MATSim.

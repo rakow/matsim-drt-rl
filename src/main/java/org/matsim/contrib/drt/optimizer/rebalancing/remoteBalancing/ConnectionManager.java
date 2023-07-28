@@ -10,6 +10,7 @@ import org.matsim.contrib.drt.analysis.DrtEventSequenceCollector;
 import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
 import org.matsim.contrib.drt.analysis.zonal.DrtZone;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingParams;
+import org.matsim.contrib.drt.optimizer.rebalancing.demandestimator.ZonalDemandEstimator;
 import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server.Rebalancer;
 import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server.RebalancingStrategyGrpc;
 import org.matsim.contrib.dvrp.fleet.DvrpVehicle;
@@ -45,6 +46,7 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 	private final FleetSpecification fleet;
 
 	private final DrtEventSequenceCollector drtEvents;
+	private final ZonalDemandEstimator zonalDemand;
 
 	private final BackoffIdleStrategy wait = new BackoffIdleStrategy();
 
@@ -59,13 +61,15 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 	 */
 	private volatile Rebalancer.RebalancingInstructions instructions;
 
-	ConnectionManager(int port, Config config, RebalancingParams params, DrtZonalSystem zonalSystem, FleetSpecification fleet, DrtEventSequenceCollector drtEvents) {
+	ConnectionManager(int port, Config config, RebalancingParams params, DrtZonalSystem zonalSystem,
+					  FleetSpecification fleet, DrtEventSequenceCollector drtEvents, ZonalDemandEstimator zonalDemand) {
 		this.port = port;
 		this.config = config;
 		this.params = params;
 		this.zonalSystem = zonalSystem;
 		this.fleet = fleet;
 		this.drtEvents = drtEvents;
+		this.zonalDemand = zonalDemand;
 	}
 
 	private static Rebalancer.DrtRequest.Builder convert(DrtEventSequenceCollector.EventSequence request) {

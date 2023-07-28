@@ -28,14 +28,14 @@ class DrtEnvironment(Environment):
 
     def step(self, action):
 
-        target = RebalancingInstructions()
+        cmd = RebalancingInstructions()
         for a in action:
-            target.targets.append(max(0, int(a)))
+            cmd.zoneTargets.vehicles.append(max(0, int(a)))
 
         # submit current time
-        target.currentTime = int(self._state[0])
+        cmd.currentTime = int(self._state[0])
 
-        response = self.server.PerformRebalancing(target)
+        response = self.server.PerformRebalancing(cmd)
 
         self._state[0] = response.time
         self._state[1] = response.time
