@@ -28,8 +28,10 @@
 
 		<!-- Don't modify, will use the same version as parent -->
 		<matsim.version>${project.parent.version}</matsim.version>
-		<protobuf.version>3.23.4</protobuf.version>
-		<grpc.version>1.56.1</grpc.version>
+
+		<!-- These versions must match -->
+		<protobuf.version>3.22.3</protobuf.version>
+		<grpc.version>1.57.0</grpc.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
