@@ -40,9 +40,10 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 
 	private static final Logger log = LogManager.getLogger(ConnectionManager.class);
 
-	private final int port;
 	private final Config config;
 	private final RebalancingParams params;
+
+	private final RemoteRebalancingParams remoteParams;
 	private final DrtZonalSystem zonalSystem;
 	private final FleetSpecification fleet;
 
@@ -62,11 +63,11 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 	 */
 	private volatile Rebalancer.RebalancingInstructions instructions;
 
-	ConnectionManager(int port, Config config, RebalancingParams params, DrtZonalSystem zonalSystem,
+	ConnectionManager(Config config, RebalancingParams params, RemoteRebalancingParams remoteParams, DrtZonalSystem zonalSystem,
 					  FleetSpecification fleet, DrtEventSequenceCollector drtEvents, ZonalDemandEstimator zonalDemand) {
-		this.port = port;
 		this.config = config;
 		this.params = params;
+		this.remoteParams = remoteParams;
 		this.zonalSystem = zonalSystem;
 		this.fleet = fleet;
 		this.drtEvents = drtEvents;
@@ -102,13 +103,13 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 	@Override
 	public void notifyStartup(StartupEvent startupEvent) {
 
-		server = ServerBuilder.forPort(port)
+		server = ServerBuilder.forPort(remoteParams.port)
 			.addService(this)
 			.build();
 
 		try {
 			server.start();
-			log.info("Running server on port {} ...", port);
+			log.info("Running server on port {} ...", remoteParams.port);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -146,9 +147,10 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 
 		Rebalancer.RebalancingSpecification.Builder builder = Rebalancer.RebalancingSpecification.newBuilder()
 			.setInterval(params.interval)
-			.setEndTime(config.qsim().getEndTime().orElseThrow(() -> new IllegalArgumentException("End time not defined")))
+			.setStartTime(remoteParams.startRebalancing)
+			.setEndTime(remoteParams.endRebalancing)
 			.setIterations(config.controler().getLastIteration())
-			.setSteps((int) (config.qsim().getEndTime().orElseThrow(() -> new IllegalArgumentException("End time not defined")) / params.interval))
+			.setSteps((int) ((remoteParams.endRebalancing - remoteParams.startRebalancing) / params.interval))
 			.setFleetSize(fleet.getVehicleSpecifications().size());
 
 		for (DrtZone zone : zonalSystem.getZones().values()) {
@@ -264,7 +266,7 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 		state.setWaitingTime(convert(waitingTime));
 		state.setTravelTime(convert(travelTime));
 
-		if (time == config.qsim().getEndTime().orElse(-1))
+		if (time >= remoteParams.endRebalancing)
 			state.setSimulationEnded(true);
 
 		this.state = state.build();

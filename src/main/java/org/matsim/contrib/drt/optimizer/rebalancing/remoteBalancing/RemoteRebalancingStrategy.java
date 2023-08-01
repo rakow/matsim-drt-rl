@@ -36,17 +36,19 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 	private final RebalancingTargetCalculator rebalancingTargetCalculator;
 	private final ZonalRelocationCalculator relocationCalculator;
 	private final RebalancingParams params;
+	private final RemoteRebalancingParams remoteParams;
 
 	public RemoteRebalancingStrategy(ConnectionManager server, DrtZonalSystem zonalSystem, Fleet fleet,
 									 RebalancingTargetCalculator rebalancingTargetCalculator,
 									 ZonalRelocationCalculator relocationCalculator,
-									 RebalancingParams params) {
+									 RebalancingParams params, RemoteRebalancingParams remoteParams) {
 		this.server = server;
 		this.zonalSystem = zonalSystem;
 		this.fleet = fleet;
 		this.rebalancingTargetCalculator = rebalancingTargetCalculator;
 		this.relocationCalculator = relocationCalculator;
 		this.params = params;
+		this.remoteParams = remoteParams;
 	}
 
 	@Override
@@ -57,6 +59,10 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 
 		Map<DrtZone, List<DvrpVehicle>> soonIdleVehiclesPerZone = RebalancingUtils.groupSoonIdleVehicles(zonalSystem,
 			params, fleet, time);
+
+		// No rebalancing before start and after end
+		if (time < remoteParams.startRebalancing || time > remoteParams.endRebalancing)
+			return List.of();
 
 		Rebalancer.RebalancingState state = server.setCurrentState(time, rebalancableVehiclesPerZone);
 
@@ -71,7 +77,6 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 		} else if (cmd.hasMinCostFlow()) {
 			return calculateMinCostRelocations(cmd.getMinCostFlow(), time, rebalancableVehiclesPerZone, soonIdleVehiclesPerZone);
 		}
-
 
 		log.warn("No rebalancing method was given.");
 		return List.of();

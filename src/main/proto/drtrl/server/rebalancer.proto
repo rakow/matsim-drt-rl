@@ -41,29 +41,34 @@ message RebalancingSpecification {
   int32 interval = 1;
 
   /*
+    First rebalancing operation.
+   */
+  double startTime = 2;
+
+  /*
     simulation end time.
    */
-  double endTime = 2;
+  double endTime = 3;
 
   /*
     number of drt vehicles.
    */
-  int32 fleetSize = 3;
+  int32 fleetSize = 4;
 
   /*
     zone specification.
    */
-  repeated Zone zones = 4;
+  repeated Zone zones = 5;
 
   /*
     Number of rebalancing steps per iteration.
    */
-  int32 steps = 5;
+  int32 steps = 6;
 
   /*
     Number of iterations.
    */
-  int32 iterations = 6;
+  int32 iterations = 7;
 }
 
 /*
@@ -115,14 +120,14 @@ message RebalancingInstructions {
    */
   // TODO: oneof is not working, seems to be a bug in grpc
   //oneof rebalance {
-    /*
-      Rebalance by using target values.
-     */
-    ZoneTargets zoneTargets = 2;
-    /*
-      Use min cost flow with alpha and beta parameter.
-     */
-    MinCostFlow minCostFlow = 3;
+  /*
+    Rebalance by using target values.
+   */
+  ZoneTargets zoneTargets = 2;
+  /*
+    Use min cost flow with alpha and beta parameter.
+   */
+  MinCostFlow minCostFlow = 3;
   //}
 
   /*

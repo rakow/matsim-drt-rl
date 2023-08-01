@@ -8,6 +8,7 @@ import org.matsim.api.core.v01.Scenario;
 import org.matsim.application.MATSimApplication;
 import org.matsim.contrib.drt.optimizer.rebalancing.RebalancingModule;
 import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.RemoteRebalancingModule;
+import org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.RemoteRebalancingParams;
 import org.matsim.contrib.drt.routing.DrtRoute;
 import org.matsim.contrib.drt.routing.DrtRouteFactory;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
@@ -94,9 +95,15 @@ public final class RunDrtRLScenario extends MATSimApplication {
 		controler.addOverridingModule(new MultiModeDrtModule());
 		controler.configureQSimComponents(DvrpQSimComponents.activateAllModes(multiModeDrtConfig));
 
+
 		int port = 5555;
-		for (DrtConfigGroup drtConfig : multiModeDrtConfig.getModalElements())
-			controler.addOverridingModule(new RemoteRebalancingModule(drtConfig, port++));
+		for (DrtConfigGroup drtConfig : multiModeDrtConfig.getModalElements()) {
+
+			RemoteRebalancingParams p = new RemoteRebalancingParams();
+			p.port = port++;
+
+			controler.addOverridingModule(new RemoteRebalancingModule(drtConfig, p));
+		}
 
 	}
 }

@@ -69,26 +69,15 @@ class DrtEnvironment(Environment):
 
         response = self.server.PerformRebalancing(cmd)
 
-        self.time = response.time
-        self._state[0] = response.time / self.spec.endTime
+        state = self.update_state(response)
 
-        state = self.server.GetCurrentState(response)
-
-        if self.objective == DrtObjective.MIN_COST_FLOW:
-            self._state[1] = sum(state.expectedDemand)
-        elif self.objective == DrtObjective.ZONE_TARGETS:
-            for i in range(len(state.expectedDemand)):
-                self._state[i + 1] = state.expectedDemand[i]
-
-        reward = -state.waitingTime.sum
+        # Scale near 1
+        reward = -state.waitingTime.sum / 1000
 
         return self._state, reward, state.simulationEnded, {}
 
     def reset(self, state=None):
         # Wait for initial state
-        current_state = self.server.GetCurrentState(SimulationTime())
-
-        self.time = 0
 
         if state is None:
             self._state = np.zeros(shape=self.action_space.shape)
@@ -96,7 +85,28 @@ class DrtEnvironment(Environment):
             self._state = state
             self._state.fill(0)
 
+        t = SimulationTime()
+        t.time = int(self.spec.startTime)
+
+        self.update_state(t)
+
         return self._state
+
+    def update_state(self, req):
+        """ Internally updas the current state based on server response """
+
+        self.time = req.time
+        self._state[0] = req.time / self.spec.endTime
+
+        state = self.server.GetCurrentState(req)
+
+        if self.objective == DrtObjective.MIN_COST_FLOW:
+            self._state[1] = sum(state.expectedDemand)
+        elif self.objective == DrtObjective.ZONE_TARGETS:
+            for i in range(len(state.expectedDemand)):
+                self._state[i + 1] = state.expectedDemand[i]
+
+        return state
 
 
 DrtEnvironment.register()
