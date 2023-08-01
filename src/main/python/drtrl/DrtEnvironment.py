@@ -38,7 +38,7 @@ class DrtEnvironment(Environment):
             self.observation_space = Box(low=0, high=1, shape=(2,))
 
             # Give alpha beta parameter
-            self.action_space = Box(low=0, high=1, shape=(2,))
+            self.action_space = Box(low=0, high=3, shape=(2,))
 
         elif self.objective == DrtObjective.ZONE_TARGETS:
             # Observe time and expected demand
