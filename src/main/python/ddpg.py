@@ -75,8 +75,8 @@ if __name__ == "__main__":
     # MDP
     env = DrtEnvironment("localhost:5555")
 
-    horizon = 500
-    gamma = 0.99
+    horizon = env.info.horizon
+    gamma = env.info.gamma
     gamma_eval = 1.
 
     # Policy

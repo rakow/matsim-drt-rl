@@ -112,6 +112,8 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 		double alpha = minCostFlow.getAlpha();
 		double beta = minCostFlow.getBeta();
 
+		log.info("Received alpha={}, beta={}", alpha, beta);
+
 		List<AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus> vehicleSurpluses = zonalSystem.getZones().values().stream().map(z -> {
 			int rebalancable = rebalancableVehiclesPerZone.getOrDefault(z, List.of()).size();
 			int soonIdle = soonIdleVehiclesPerZone.getOrDefault(z, List.of()).size();

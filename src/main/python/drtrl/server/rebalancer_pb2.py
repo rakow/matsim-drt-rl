@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\nCorg.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1d\x64rtrl/server/rebalancer.proto\x12\x0c\x64rtrl.server\"\x07\n\x05\x45mpty\"8\n\x04Zone\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tcentroidX\x18\x02 \x01(\x01\x12\x11\n\tcentroidY\x18\x03 \x01(\x01\"\x87\x01\n\x18RebalancingSpecification\x12\x10\n\x08interval\x18\x01 \x01(\x05\x12\x0f\n\x07\x65ndTime\x18\x02 \x01(\x01\x12\x11\n\tfleetSize\x18\x03 \x01(\x05\x12!\n\x05zones\x18\x04 \x03(\x0b\x32\x12.drtrl.server.Zone\x12\x12\n\niterations\x18\x05 \x01(\x05\"\x1e\n\x0eSimulationTime\x12\x0c\n\x04time\x18\x01 \x01(\x05\"d\n\nDrtRequest\x12\x16\n\x0esubmissionTime\x18\x01 \x01(\x01\x12\x15\n\rdepartureTime\x18\x02 \x01(\x01\x12\x12\n\npickupTime\x18\x03 \x01(\x01\x12\x13\n\x0b\x64ropOffTime\x18\x04 \x01(\x01\"K\n\x05Stats\x12\x0b\n\x03sum\x18\x01 \x01(\x01\x12\x0c\n\x04mean\x18\x02 \x01(\x01\x12\x0e\n\x06median\x18\x03 \x01(\x01\x12\x0b\n\x03q95\x18\x04 \x01(\x01\x12\n\n\x02q5\x18\x05 \x01(\x01\"\x8b\x02\n\x17RebalancingInstructions\x12\x13\n\x0b\x63urrentTime\x18\x01 \x01(\x05\x12\x46\n\x0bzoneTargets\x18\x02 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.ZoneTargets\x12\x46\n\x0bminCostFlow\x18\x03 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.MinCostFlow\x1a\x1f\n\x0bZoneTargets\x12\x10\n\x08vehicles\x18\x01 \x03(\x05\x1a*\n\x0bMinCostFlow\x12\r\n\x05\x61lpha\x18\x01 \x01(\x01\x12\x0c\n\x04\x62\x65ta\x18\x02 \x01(\x01\"\xc0\x03\n\x10RebalancingState\x12\x16\n\x0esimulationTime\x18\x01 \x01(\x01\x12\x64\n\x1brebalancableVehiclesPerZone\x18\x02 \x03(\x0b\x32?.drtrl.server.RebalancingState.RebalancableVehiclesPerZoneEntry\x12\x32\n\x10performedRequest\x18\x03 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x32\n\x10rejectedRequests\x18\x04 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x16\n\x0e\x65xpectedDemand\x18\x05 \x03(\x01\x12(\n\x0bwaitingTime\x18\x06 \x01(\x0b\x32\x13.drtrl.server.Stats\x12\'\n\ntravelTime\x18\x07 \x01(\x0b\x32\x13.drtrl.server.Stats\x12\x17\n\x0fsimulationEnded\x18\x08 \x01(\x08\x1a\x42\n RebalancableVehiclesPerZoneEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x32\x98\x02\n\x13RebalancingStrategy\x12Q\n\x10GetSpecification\x12\x13.drtrl.server.Empty\x1a&.drtrl.server.RebalancingSpecification\"\x00\x12Q\n\x0fGetCurrentState\x12\x1c.drtrl.server.SimulationTime\x1a\x1e.drtrl.server.RebalancingState\"\x00\x12[\n\x12PerformRebalancing\x12%.drtrl.server.RebalancingInstructions\x1a\x1c.drtrl.server.SimulationTime\"\x00\x42\x45\nCorg.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.serverb\x06proto3'
+  serialized_pb=b'\n\x1d\x64rtrl/server/rebalancer.proto\x12\x0c\x64rtrl.server\"\x07\n\x05\x45mpty\"8\n\x04Zone\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tcentroidX\x18\x02 \x01(\x01\x12\x11\n\tcentroidY\x18\x03 \x01(\x01\"\x96\x01\n\x18RebalancingSpecification\x12\x10\n\x08interval\x18\x01 \x01(\x05\x12\x0f\n\x07\x65ndTime\x18\x02 \x01(\x01\x12\x11\n\tfleetSize\x18\x03 \x01(\x05\x12!\n\x05zones\x18\x04 \x03(\x0b\x32\x12.drtrl.server.Zone\x12\r\n\x05steps\x18\x05 \x01(\x05\x12\x12\n\niterations\x18\x06 \x01(\x05\"\x1e\n\x0eSimulationTime\x12\x0c\n\x04time\x18\x01 \x01(\x05\"d\n\nDrtRequest\x12\x16\n\x0esubmissionTime\x18\x01 \x01(\x01\x12\x15\n\rdepartureTime\x18\x02 \x01(\x01\x12\x12\n\npickupTime\x18\x03 \x01(\x01\x12\x13\n\x0b\x64ropOffTime\x18\x04 \x01(\x01\"K\n\x05Stats\x12\x0b\n\x03sum\x18\x01 \x01(\x01\x12\x0c\n\x04mean\x18\x02 \x01(\x01\x12\x0e\n\x06median\x18\x03 \x01(\x01\x12\x0b\n\x03q95\x18\x04 \x01(\x01\x12\n\n\x02q5\x18\x05 \x01(\x01\"\x8b\x02\n\x17RebalancingInstructions\x12\x13\n\x0b\x63urrentTime\x18\x01 \x01(\x05\x12\x46\n\x0bzoneTargets\x18\x02 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.ZoneTargets\x12\x46\n\x0bminCostFlow\x18\x03 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.MinCostFlow\x1a\x1f\n\x0bZoneTargets\x12\x10\n\x08vehicles\x18\x01 \x03(\x05\x1a*\n\x0bMinCostFlow\x12\r\n\x05\x61lpha\x18\x01 \x01(\x01\x12\x0c\n\x04\x62\x65ta\x18\x02 \x01(\x01\"\xc0\x03\n\x10RebalancingState\x12\x16\n\x0esimulationTime\x18\x01 \x01(\x01\x12\x64\n\x1brebalancableVehiclesPerZone\x18\x02 \x03(\x0b\x32?.drtrl.server.RebalancingState.RebalancableVehiclesPerZoneEntry\x12\x32\n\x10performedRequest\x18\x03 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x32\n\x10rejectedRequests\x18\x04 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x16\n\x0e\x65xpectedDemand\x18\x05 \x03(\x01\x12(\n\x0bwaitingTime\x18\x06 \x01(\x0b\x32\x13.drtrl.server.Stats\x12\'\n\ntravelTime\x18\x07 \x01(\x0b\x32\x13.drtrl.server.Stats\x12\x17\n\x0fsimulationEnded\x18\x08 \x01(\x08\x1a\x42\n RebalancableVehiclesPerZoneEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x32\x98\x02\n\x13RebalancingStrategy\x12Q\n\x10GetSpecification\x12\x13.drtrl.server.Empty\x1a&.drtrl.server.RebalancingSpecification\"\x00\x12Q\n\x0fGetCurrentState\x12\x1c.drtrl.server.SimulationTime\x1a\x1e.drtrl.server.RebalancingState\"\x00\x12[\n\x12PerformRebalancing\x12%.drtrl.server.RebalancingInstructions\x1a\x1c.drtrl.server.SimulationTime\"\x00\x42\x45\nCorg.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.serverb\x06proto3'
 )
 
 
@@ -133,8 +133,15 @@ _REBALANCINGSPECIFICATION = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='iterations', full_name='drtrl.server.RebalancingSpecification.iterations', index=4,
+      name='steps', full_name='drtrl.server.RebalancingSpecification.steps', index=4,
       number=5, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='iterations', full_name='drtrl.server.RebalancingSpecification.iterations', index=5,
+      number=6, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -152,7 +159,7 @@ _REBALANCINGSPECIFICATION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=115,
-  serialized_end=250,
+  serialized_end=265,
 )
 
 
@@ -183,8 +190,8 @@ _SIMULATIONTIME = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=252,
-  serialized_end=282,
+  serialized_start=267,
+  serialized_end=297,
 )
 
 
@@ -236,8 +243,8 @@ _DRTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=284,
-  serialized_end=384,
+  serialized_start=299,
+  serialized_end=399,
 )
 
 
@@ -296,8 +303,8 @@ _STATS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=386,
-  serialized_end=461,
+  serialized_start=401,
+  serialized_end=476,
 )
 
 
@@ -328,8 +335,8 @@ _REBALANCINGINSTRUCTIONS_ZONETARGETS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=656,
-  serialized_end=687,
+  serialized_start=671,
+  serialized_end=702,
 )
 
 _REBALANCINGINSTRUCTIONS_MINCOSTFLOW = _descriptor.Descriptor(
@@ -366,8 +373,8 @@ _REBALANCINGINSTRUCTIONS_MINCOSTFLOW = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=689,
-  serialized_end=731,
+  serialized_start=704,
+  serialized_end=746,
 )
 
 _REBALANCINGINSTRUCTIONS = _descriptor.Descriptor(
@@ -411,8 +418,8 @@ _REBALANCINGINSTRUCTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=464,
-  serialized_end=731,
+  serialized_start=479,
+  serialized_end=746,
 )
 
 
@@ -450,8 +457,8 @@ _REBALANCINGSTATE_REBALANCABLEVEHICLESPERZONEENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1116,
-  serialized_end=1182,
+  serialized_start=1131,
+  serialized_end=1197,
 )
 
 _REBALANCINGSTATE = _descriptor.Descriptor(
@@ -530,8 +537,8 @@ _REBALANCINGSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=734,
-  serialized_end=1182,
+  serialized_start=749,
+  serialized_end=1197,
 )
 
 _REBALANCINGSPECIFICATION.fields_by_name['zones'].message_type = _ZONE
@@ -646,8 +653,8 @@ _REBALANCINGSTRATEGY = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1185,
-  serialized_end=1465,
+  serialized_start=1200,
+  serialized_end=1480,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetSpecification',

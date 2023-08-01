@@ -146,8 +146,9 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 
 		Rebalancer.RebalancingSpecification.Builder builder = Rebalancer.RebalancingSpecification.newBuilder()
 			.setInterval(params.interval)
-			.setEndTime(config.qsim().getEndTime().orElse(-1))
+			.setEndTime(config.qsim().getEndTime().orElseThrow(() -> new IllegalArgumentException("End time not defined")))
 			.setIterations(config.controler().getLastIteration())
+			.setSteps((int) (config.qsim().getEndTime().orElseThrow(() -> new IllegalArgumentException("End time not defined")) / params.interval))
 			.setFleetSize(fleet.getVehicleSpecifications().size());
 
 		for (DrtZone zone : zonalSystem.getZones().values()) {

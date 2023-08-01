@@ -56,9 +56,14 @@ message RebalancingSpecification {
   repeated Zone zones = 4;
 
   /*
+    Number of rebalancing steps per iteration.
+   */
+  int32 steps = 5;
+
+  /*
     Number of iterations.
    */
-  int32 iterations = 5;
+  int32 iterations = 6;
 }
 
 /*

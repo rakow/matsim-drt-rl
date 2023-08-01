@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from enum import Enum, auto
+
 import grpc
 import numpy as np
 from mushroom_rl.core import Environment, MDPInfo
@@ -9,10 +11,17 @@ from .server.rebalancer_pb2 import Empty, SimulationTime, RebalancingInstruction
 from .server.rebalancer_pb2_grpc import RebalancingStrategyStub
 
 
+class DrtObjective(Enum):
+    """ The action space of the environment """
+
+    MIN_COST_FLOW = auto()
+    ZONE_TARGETS = auto()
+
+
 class DrtEnvironment(Environment):
     """ Environment for DRT Rebalancing"""
 
-    def __init__(self, server):
+    def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW):
         channel = grpc.insecure_channel(server)
         self.server = RebalancingStrategyStub(channel)
         self.time = 0
@@ -20,18 +29,40 @@ class DrtEnvironment(Environment):
         print("Connecting to %s..." % server)
         self.spec = self.server.GetSpecification(Empty(), wait_for_ready=True)
 
-        # only time is observed
-        self.observation_space = Box(low=0, high=1, shape=(2,))
-        self.action_space = Box(low=0, high=self.spec.fleetSize, shape=(len(self.spec.zones),))
+        # observe time and demand
+        self.objective = objective
 
-        mdp_info = MDPInfo(self.observation_space, self.action_space, gamma=0.99, horizon=100)
+        if self.objective == DrtObjective.MIN_COST_FLOW:
+
+            # Observe time and total expected demand
+            self.observation_space = Box(low=0, high=1, shape=(2,))
+
+            # Give alpha beta parameter
+            self.action_space = Box(low=0, high=1, shape=(2,))
+
+        elif self.objective == DrtObjective.ZONE_TARGETS:
+            # Observe time and expected demand
+            self.observation_space = Box(low=0, high=1, shape=(1 + len(self.spec.zones),))
+
+            # One target value per zone
+            self.action_space = Box(low=0, high=self.spec.fleetSize, shape=(len(self.spec.zones),))
+        else:
+            raise Exception("Invalid objective: %s" % self.objective)
+
+        mdp_info = MDPInfo(self.observation_space, self.action_space, gamma=0.99, horizon=self.spec.steps)
         super().__init__(mdp_info)
 
     def step(self, action):
 
         cmd = RebalancingInstructions()
-        for a in action:
-            cmd.zoneTargets.vehicles.append(max(0, int(a)))
+
+        if self.objective == DrtObjective.MIN_COST_FLOW:
+            cmd.minCostFlow.alpha = action[0]
+            cmd.minCostFlow.beta = action[1]
+
+        elif self.objective == DrtObjective.ZONE_TARGETS:
+            for a in action:
+                cmd.zoneTargets.vehicles.append(max(0, int(a)))
 
         # submit current time
         cmd.currentTime = int(self.time)
@@ -40,9 +71,14 @@ class DrtEnvironment(Environment):
 
         self.time = response.time
         self._state[0] = response.time / self.spec.endTime
-        self._state[1] = response.time / self.spec.endTime
 
         state = self.server.GetCurrentState(response)
+
+        if self.objective == DrtObjective.MIN_COST_FLOW:
+            self._state[1] = sum(state.expectedDemand)
+        elif self.objective == DrtObjective.ZONE_TARGETS:
+            for i in range(len(state.expectedDemand)):
+                self._state[i + 1] = state.expectedDemand[i]
 
         reward = -state.waitingTime.sum
 
@@ -55,11 +91,10 @@ class DrtEnvironment(Environment):
         self.time = 0
 
         if state is None:
-            self._state = np.zeros(2)
+            self._state = np.zeros(shape=self.action_space.shape)
         else:
             self._state = state
-            self._state[0] = 0
-            self._state[1] = 0
+            self._state.fill(0)
 
         return self._state
 
