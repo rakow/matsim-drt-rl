@@ -124,7 +124,7 @@ if __name__ == "__main__":
     core = Core(agent, env)
 
     # Fill the replay memory with random samples
-    core.learn(n_episodes=5, n_episodes_per_fit=5)
+    core.learn(n_episodes=5, n_steps_per_fit=5)
 
     # RUN
     # subtract  evaluate iterations
@@ -136,9 +136,7 @@ if __name__ == "__main__":
     print('Epoch: 0')
     print('J: ', np.mean(J))
 
-    for n in range(n_epochs):
-        print('Epoch: ', n + 1)
-        core.learn(n_episodes=1, n_episodes_per_fit=1, render=False)
+    core.learn(n_episodes=n_epochs, n_episodes_per_fit=1, render=False)
 
     # Evaluate results during last iterations
     for n in range(1, n_eval):

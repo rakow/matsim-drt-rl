@@ -183,21 +183,26 @@ message RebalancingState {
   repeated double expectedDemand = 5;
 
   /*
+    Maximum expected demand in all zones over time bins. May be used for normalization.
+   */
+  double maxExpectedDemand = 6;
+
+  /*
     Waiting time statistics within last timestep.
    */
-  Stats waitingTime = 6;
+  Stats waitingTime = 7;
 
   /*
     Travel time statis for performed requests.
    */
-  Stats travelTime = 7;
+  Stats travelTime = 8;
 
   // TODO: fleet driven km
 
   /*
     Indicates end of simulation.
   */
-  bool simulationEnded = 8;
+  bool simulationEnded = 9;
 
 }
 

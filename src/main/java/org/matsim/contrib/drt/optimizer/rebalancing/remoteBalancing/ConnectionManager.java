@@ -55,6 +55,11 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 	private Server server;
 
 	/**
+	 * Maximum total expected demand in all zone per time step.
+	 */
+	private double maxExpectedDemand;
+
+	/**
 	 * Current state.
 	 */
 	private volatile Rebalancer.RebalancingState state;
@@ -130,6 +135,16 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 		// reset from old iteration
 		state = null;
 		instructions = null;
+
+		// 1 is the minimum
+		maxExpectedDemand = 1;
+
+		for (double t = remoteParams.startRebalancing; t < remoteParams.endRebalancing; t+=params.interval) {
+			ToDoubleFunction<DrtZone> demand = zonalDemand.getExpectedDemand(t, params.interval);
+			double sum = zonalSystem.getZones().values().stream().mapToDouble(demand).sum();
+			if (sum > maxExpectedDemand)
+				maxExpectedDemand = sum;
+		}
 	}
 
 	@Override
@@ -265,6 +280,7 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 		state.setSimulationTime(time);
 		state.setWaitingTime(convert(waitingTime));
 		state.setTravelTime(convert(travelTime));
+		state.setMaxExpectedDemand(maxExpectedDemand);
 
 		if (time >= remoteParams.endRebalancing)
 			state.setSimulationEnded(true);

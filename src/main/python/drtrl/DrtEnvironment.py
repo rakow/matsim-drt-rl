@@ -93,18 +93,19 @@ class DrtEnvironment(Environment):
         return self._state
 
     def update_state(self, req):
-        """ Internally updas the current state based on server response """
+        """ Internally updates the current state based on server response """
 
         self.time = req.time
         self._state[0] = req.time / self.spec.endTime
 
         state = self.server.GetCurrentState(req)
 
+        # Normalize demand with the max expected
         if self.objective == DrtObjective.MIN_COST_FLOW:
-            self._state[1] = sum(state.expectedDemand)
+            self._state[1] = sum(state.expectedDemand) / state.maxExpectedDemand
         elif self.objective == DrtObjective.ZONE_TARGETS:
             for i in range(len(state.expectedDemand)):
-                self._state[i + 1] = state.expectedDemand[i]
+                self._state[i + 1] = state.expectedDemand[i] / state.maxExpectedDemand
 
         return state
 
