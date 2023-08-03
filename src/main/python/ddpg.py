@@ -72,6 +72,8 @@ class ActorNetwork(nn.Module):
 
 if __name__ == "__main__":
 
+    # TODO Deprecated: use the main.py instead and choose one of the algorithms
+
     # MDP
     env = DrtEnvironment("localhost:5555")
 

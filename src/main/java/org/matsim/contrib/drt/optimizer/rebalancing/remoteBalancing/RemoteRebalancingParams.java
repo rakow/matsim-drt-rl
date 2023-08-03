@@ -17,12 +17,12 @@ public class RemoteRebalancingParams extends ReflectiveConfigGroup implements Re
 
 	@Parameter
 	@Comment("Earliest time for accepting rebalancing instructions.")
-	public double startRebalancing = 5 * 3600;
+	public double startRebalancing = 6 * 3600;
 
 
 	@Parameter
 	@Comment("Latest time for the last rebalancing interval.")
-	public double endRebalancing = 23 * 3600;
+	public double endRebalancing = 18 * 3600;
 
 	public RemoteRebalancingParams() {
 		super("remoteRebalancing");

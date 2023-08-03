@@ -3,6 +3,8 @@ package org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,6 +104,7 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 			.setMedian(stats.getPercentile(0.5))
 			.setQ5(stats.getPercentile(0.05))
 			.setQ95(stats.getPercentile(0.95))
+			.setN((int) stats.getN())
 			.build();
 	}
 
@@ -139,12 +142,18 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 		// 1 is the minimum
 		maxExpectedDemand = 1;
 
-		for (double t = remoteParams.startRebalancing; t < remoteParams.endRebalancing; t+=params.interval) {
+		DoubleList demands = new DoubleArrayList();
+
+		for (double t = remoteParams.startRebalancing; t < remoteParams.endRebalancing; t += params.interval) {
 			ToDoubleFunction<DrtZone> demand = zonalDemand.getExpectedDemand(t, params.interval);
 			double sum = zonalSystem.getZones().values().stream().mapToDouble(demand).sum();
+			demands.add(sum);
 			if (sum > maxExpectedDemand)
 				maxExpectedDemand = sum;
 		}
+
+		// For debugging and info
+		log.info("Demands from {} to {}: {}", remoteParams.startRebalancing, remoteParams.endRebalancing, demands);
 	}
 
 	@Override

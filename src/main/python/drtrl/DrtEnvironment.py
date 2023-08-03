@@ -52,6 +52,10 @@ class DrtEnvironment(Environment):
         mdp_info = MDPInfo(self.observation_space, self.action_space, gamma=0.99, horizon=self.spec.steps)
         super().__init__(mdp_info)
 
+    def __repr__(self):
+        return "<DrtEnvironment: interval=%d, fleetSize=%d, startTime=%.0f, zones=%d" % (
+            self.spec.interval, self.spec.fleetSize, self.spec.startTime, len(self.spec.zones))
+
     def step(self, action):
 
         cmd = RebalancingInstructions()
@@ -71,8 +75,8 @@ class DrtEnvironment(Environment):
 
         state = self.update_state(response)
 
-        # Scale near 1
-        reward = -state.waitingTime.sum / 1000
+        # Any wait above 180min gives negative reward, divided to reduce the scale
+        reward = (180 * state.waitingTime.n + -state.waitingTime.sum) / 1000
 
         return self._state, reward, state.simulationEnded, {}
 

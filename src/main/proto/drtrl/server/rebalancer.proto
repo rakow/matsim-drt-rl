@@ -103,6 +103,7 @@ message Stats {
   double median = 3;
   double q95 = 4;
   double q5 = 5;
+  int32 n = 6;
 }
 
 /*
