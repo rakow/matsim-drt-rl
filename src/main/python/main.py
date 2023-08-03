@@ -23,6 +23,7 @@ class Algorithm(Enum):
     sac = SAC
     a2c = A2C
     ac = AC
+    ppo = PPO
 
 
 if __name__ == "__main__":
