@@ -59,16 +59,13 @@ class ActorNetwork(nn.Module):
         nn.init.xavier_uniform_(self._h2.weight,
                                 gain=nn.init.calculate_gain('relu'))
         nn.init.xavier_uniform_(self._h3.weight,
-                                gain=nn.init.calculate_gain('tanh'))
+                                gain=nn.init.calculate_gain('linear'))
 
     def forward(self, state):
         features1 = F.relu(self._h1(torch.squeeze(state, 1).float()))
         features2 = F.relu(self._h2(features1))
 
-        # Scale action space to sensible value
-        a = (torch.tanh(self._h3(features2)) + 1) * self.upper_bound / 2
-
-        return torch.clip(a, 0, self.upper_bound)
+        return self._h3(features2)
 
 
 @define

@@ -38,7 +38,7 @@ class DrtEnvironment(Environment):
             self.observation_space = Box(low=0, high=1, shape=(2,))
 
             # Give alpha beta parameter
-            self.action_space = Box(low=0, high=1.5, shape=(2,))
+            self.action_space = Box(low=-1, high=1, shape=(2,))
 
         elif self.objective == DrtObjective.ZONE_TARGETS:
             # Observe time and expected demand
@@ -62,6 +62,13 @@ class DrtEnvironment(Environment):
         cmd = RebalancingInstructions()
 
         if self.objective == DrtObjective.MIN_COST_FLOW:
+
+            bound = 1.5
+
+            # Unsquash and clip action space
+            action = (action + 1) * bound / 2
+            action = np.clip(action, 0, bound)
+
             cmd.minCostFlow.alpha = action[0]
             cmd.minCostFlow.beta = action[1]
 
