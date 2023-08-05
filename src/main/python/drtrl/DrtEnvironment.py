@@ -38,7 +38,7 @@ class DrtEnvironment(Environment):
             self.observation_space = Box(low=0, high=1, shape=(2,))
 
             # Give alpha beta parameter
-            self.action_space = Box(low=0, high=3, shape=(2,))
+            self.action_space = Box(low=0, high=1.5, shape=(2,))
 
         elif self.objective == DrtObjective.ZONE_TARGETS:
             # Observe time and expected demand
@@ -49,7 +49,8 @@ class DrtEnvironment(Environment):
         else:
             raise Exception("Invalid objective: %s" % self.objective)
 
-        mdp_info = MDPInfo(self.observation_space, self.action_space, gamma=0.99, horizon=self.spec.steps)
+        # low discount factor since actions don't reach far into the future
+        mdp_info = MDPInfo(self.observation_space, self.action_space, gamma=0.8, horizon=self.spec.steps)
         super().__init__(mdp_info)
 
     def __repr__(self):
@@ -84,7 +85,7 @@ class DrtEnvironment(Environment):
         # Wait for initial state
 
         if state is None:
-            self._state = np.zeros(shape=self.action_space.shape)
+            self._state = np.zeros(shape=self.observation_space.shape)
         else:
             self._state = state
             self._state.fill(0)

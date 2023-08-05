@@ -5,8 +5,7 @@ from abc import abstractmethod
 from attrs import define
 from mushroom_rl.core.agent import Agent
 
-from .DrtEnvironment import DrtEnvironment
-
+from .DrtEnvironment import DrtEnvironment, DrtObjective
 
 @define
 class Base:

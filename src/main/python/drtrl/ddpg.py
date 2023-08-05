@@ -49,7 +49,7 @@ class ActorNetwork(nn.Module):
         n_input = input_shape[-1]
         n_output = output_shape[0]
 
-        self.upper_bound = upper_bound / 2
+        self.upper_bound = upper_bound
         self._h1 = nn.Linear(n_input, n_features)
         self._h2 = nn.Linear(n_features, n_features)
         self._h3 = nn.Linear(n_features, n_output)
@@ -66,9 +66,9 @@ class ActorNetwork(nn.Module):
         features2 = F.relu(self._h2(features1))
 
         # Scale action space to sensible value
-        a = (torch.tanh(self._h3(features2)) + 1) * self.upper_bound
+        a = (torch.tanh(self._h3(features2)) + 1) * self.upper_bound / 2
 
-        return a
+        return torch.clip(a, 0, self.upper_bound)
 
 
 @define
@@ -97,7 +97,7 @@ class DDPG(Base):
         actor_input_shape = self.env.info.observation_space.shape
         actor_params = dict(network=ActorNetwork,
                             n_features=n_features,
-                            upper_bound=self.env.spec.fleetSize if self.env.objective == DrtObjective.ZONE_TARGETS else 3,
+                            upper_bound=self.env.info.action_space.high[0], # same upper bound for both
                             input_shape=actor_input_shape,
                             output_shape=self.env.info.action_space.shape)
 
