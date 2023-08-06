@@ -61,10 +61,13 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 			params, fleet, time);
 
 		// No rebalancing before start and after end
-		if (time < remoteParams.startRebalancing || time > remoteParams.endRebalancing)
-			return List.of();
+		if (time < remoteParams.startRebalancing || time > remoteParams.endRebalancing || server.skipTimestep(time))
+			return calculateMinCostRelocations(Rebalancer.RebalancingInstructions.MinCostFlow.newBuilder()
+				.setAlpha(0.5)
+				.setBeta(0.5)
+				.build(), time, rebalancableVehiclesPerZone, soonIdleVehiclesPerZone);
 
-		Rebalancer.RebalancingState state = server.setCurrentState(time, rebalancableVehiclesPerZone);
+		Rebalancer.RebalancingState state = server.setCurrentState(time, rebalancableVehiclesPerZone, soonIdleVehiclesPerZone);
 
 		// Check if last time step was signaled
 		if (state.getSimulationEnded())

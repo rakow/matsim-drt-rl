@@ -17,7 +17,7 @@ if __name__ == "__main__":
         .get_default_config()
         # or "corridor" if registered above
         .environment(ManagedDrtEnvironment,
-                     env_config={"jar": "../../../matsim-drt-rl-1.x-SNAPSHOT-661cbd4-dirty.jar",
+                     env_config={"jar": "../../../matsim-drt-rl-1.x-SNAPSHOT-f1aa466-dirty.jar",
                                  "configPath": "../../../scenarios/cottbus/drt_cottbus.xml",
                                  "objective": DrtObjective.MIN_COST_FLOW},
                      normalize_actions=True)

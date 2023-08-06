@@ -162,48 +162,66 @@ message RebalancingState {
   double simulationTime = 1;
 
   /*
-    Number of rebalance vehicles within a zone.
+    Number of rebalance vehicles currently in a zone.
    */
-  map<string, int32> rebalancableVehiclesPerZone = 2;
+  repeated int32 rebalancableVehicles = 2;
+
+  /*
+  Number of rebalance vehicles currently in a zone.
+ */
+  repeated int32 soonIdleVehicles = 3;
 
   // TODO map string, int32 number of waiting passengers per zone
 
   /*
     Performed requests since last time step.
    */
-  repeated DrtRequest performedRequest = 3;
+  repeated DrtRequest performedRequest = 4;
 
   /*
     Rejected requests within last timestep.
    */
-  repeated DrtRequest rejectedRequests = 4;
+  repeated DrtRequest rejectedRequests = 5;
 
   /*
     Expected demand for current time step in order of zones.
    */
-  repeated double expectedDemand = 5;
+  repeated double expectedDemand = 6;
 
   /*
     Maximum expected demand in all zones over time bins. May be used for normalization.
    */
-  double maxExpectedDemand = 6;
+  double maxExpectedDemand = 7;
 
   /*
     Waiting time statistics within last timestep.
    */
-  Stats waitingTime = 7;
+  Stats waitingTime = 8;
 
   /*
     Travel time statis for performed requests.
    */
-  Stats travelTime = 8;
+  Stats travelTime = 9;
 
-  // TODO: fleet driven km
+  /*
+    Driven meter in last time step.
+   */
+  Stats drivenDistance = 10;
+
+  /*
+    Driven distance with no passenger in last time step.
+   */
+  Stats drivenEmptyDistance = 11;
+
+  /*
+    Driven distance multiplied by occupancy.
+   */
+  Stats passengerTraveledDistance = 12;
 
   /*
     Indicates end of simulation.
   */
-  bool simulationEnded = 9;
+  bool simulationEnded = 13;
 
 }
 

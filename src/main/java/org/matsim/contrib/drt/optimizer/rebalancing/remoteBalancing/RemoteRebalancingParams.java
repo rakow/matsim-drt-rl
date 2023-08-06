@@ -24,6 +24,10 @@ public class RemoteRebalancingParams extends ReflectiveConfigGroup implements Re
 	@Comment("Latest time for the last rebalancing interval.")
 	public double endRebalancing = 18 * 3600;
 
+	@Parameter
+	@Comment("Skip time steps without expected demand.")
+	public boolean skipNoDemand = true;
+
 	public RemoteRebalancingParams() {
 		super("remoteRebalancing");
 	}

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\nCorg.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.server',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1d\x64rtrl/server/rebalancer.proto\x12\x0c\x64rtrl.server\"\x07\n\x05\x45mpty\"8\n\x04Zone\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tcentroidX\x18\x02 \x01(\x01\x12\x11\n\tcentroidY\x18\x03 \x01(\x01\"\xa9\x01\n\x18RebalancingSpecification\x12\x10\n\x08interval\x18\x01 \x01(\x05\x12\x11\n\tstartTime\x18\x02 \x01(\x01\x12\x0f\n\x07\x65ndTime\x18\x03 \x01(\x01\x12\x11\n\tfleetSize\x18\x04 \x01(\x05\x12!\n\x05zones\x18\x05 \x03(\x0b\x32\x12.drtrl.server.Zone\x12\r\n\x05steps\x18\x06 \x01(\x05\x12\x12\n\niterations\x18\x07 \x01(\x05\"\x1e\n\x0eSimulationTime\x12\x0c\n\x04time\x18\x01 \x01(\x05\"d\n\nDrtRequest\x12\x16\n\x0esubmissionTime\x18\x01 \x01(\x01\x12\x15\n\rdepartureTime\x18\x02 \x01(\x01\x12\x12\n\npickupTime\x18\x03 \x01(\x01\x12\x13\n\x0b\x64ropOffTime\x18\x04 \x01(\x01\"V\n\x05Stats\x12\x0b\n\x03sum\x18\x01 \x01(\x01\x12\x0c\n\x04mean\x18\x02 \x01(\x01\x12\x0e\n\x06median\x18\x03 \x01(\x01\x12\x0b\n\x03q95\x18\x04 \x01(\x01\x12\n\n\x02q5\x18\x05 \x01(\x01\x12\t\n\x01n\x18\x06 \x01(\x05\"\x8b\x02\n\x17RebalancingInstructions\x12\x13\n\x0b\x63urrentTime\x18\x01 \x01(\x05\x12\x46\n\x0bzoneTargets\x18\x02 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.ZoneTargets\x12\x46\n\x0bminCostFlow\x18\x03 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.MinCostFlow\x1a\x1f\n\x0bZoneTargets\x12\x10\n\x08vehicles\x18\x01 \x03(\x05\x1a*\n\x0bMinCostFlow\x12\r\n\x05\x61lpha\x18\x01 \x01(\x01\x12\x0c\n\x04\x62\x65ta\x18\x02 \x01(\x01\"\xdb\x03\n\x10RebalancingState\x12\x16\n\x0esimulationTime\x18\x01 \x01(\x01\x12\x64\n\x1brebalancableVehiclesPerZone\x18\x02 \x03(\x0b\x32?.drtrl.server.RebalancingState.RebalancableVehiclesPerZoneEntry\x12\x32\n\x10performedRequest\x18\x03 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x32\n\x10rejectedRequests\x18\x04 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x16\n\x0e\x65xpectedDemand\x18\x05 \x03(\x01\x12\x19\n\x11maxExpectedDemand\x18\x06 \x01(\x01\x12(\n\x0bwaitingTime\x18\x07 \x01(\x0b\x32\x13.drtrl.server.Stats\x12\'\n\ntravelTime\x18\x08 \x01(\x0b\x32\x13.drtrl.server.Stats\x12\x17\n\x0fsimulationEnded\x18\t \x01(\x08\x1a\x42\n RebalancableVehiclesPerZoneEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x32\x98\x02\n\x13RebalancingStrategy\x12Q\n\x10GetSpecification\x12\x13.drtrl.server.Empty\x1a&.drtrl.server.RebalancingSpecification\"\x00\x12Q\n\x0fGetCurrentState\x12\x1c.drtrl.server.SimulationTime\x1a\x1e.drtrl.server.RebalancingState\"\x00\x12[\n\x12PerformRebalancing\x12%.drtrl.server.RebalancingInstructions\x1a\x1c.drtrl.server.SimulationTime\"\x00\x42\x45\nCorg.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.serverb\x06proto3'
+  serialized_pb=b'\n\x1d\x64rtrl/server/rebalancer.proto\x12\x0c\x64rtrl.server\"\x07\n\x05\x45mpty\"8\n\x04Zone\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tcentroidX\x18\x02 \x01(\x01\x12\x11\n\tcentroidY\x18\x03 \x01(\x01\"\xa9\x01\n\x18RebalancingSpecification\x12\x10\n\x08interval\x18\x01 \x01(\x05\x12\x11\n\tstartTime\x18\x02 \x01(\x01\x12\x0f\n\x07\x65ndTime\x18\x03 \x01(\x01\x12\x11\n\tfleetSize\x18\x04 \x01(\x05\x12!\n\x05zones\x18\x05 \x03(\x0b\x32\x12.drtrl.server.Zone\x12\r\n\x05steps\x18\x06 \x01(\x05\x12\x12\n\niterations\x18\x07 \x01(\x05\"\x1e\n\x0eSimulationTime\x12\x0c\n\x04time\x18\x01 \x01(\x05\"d\n\nDrtRequest\x12\x16\n\x0esubmissionTime\x18\x01 \x01(\x01\x12\x15\n\rdepartureTime\x18\x02 \x01(\x01\x12\x12\n\npickupTime\x18\x03 \x01(\x01\x12\x13\n\x0b\x64ropOffTime\x18\x04 \x01(\x01\"V\n\x05Stats\x12\x0b\n\x03sum\x18\x01 \x01(\x01\x12\x0c\n\x04mean\x18\x02 \x01(\x01\x12\x0e\n\x06median\x18\x03 \x01(\x01\x12\x0b\n\x03q95\x18\x04 \x01(\x01\x12\n\n\x02q5\x18\x05 \x01(\x01\x12\t\n\x01n\x18\x06 \x01(\x05\"\x8b\x02\n\x17RebalancingInstructions\x12\x13\n\x0b\x63urrentTime\x18\x01 \x01(\x05\x12\x46\n\x0bzoneTargets\x18\x02 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.ZoneTargets\x12\x46\n\x0bminCostFlow\x18\x03 \x01(\x0b\x32\x31.drtrl.server.RebalancingInstructions.MinCostFlow\x1a\x1f\n\x0bZoneTargets\x12\x10\n\x08vehicles\x18\x01 \x03(\x05\x1a*\n\x0bMinCostFlow\x12\r\n\x05\x61lpha\x18\x01 \x01(\x01\x12\x0c\n\x04\x62\x65ta\x18\x02 \x01(\x01\"\x80\x04\n\x10RebalancingState\x12\x16\n\x0esimulationTime\x18\x01 \x01(\x01\x12\x1c\n\x14rebalancableVehicles\x18\x02 \x03(\x05\x12\x18\n\x10soonIdleVehicles\x18\x03 \x03(\x05\x12\x32\n\x10performedRequest\x18\x04 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x32\n\x10rejectedRequests\x18\x05 \x03(\x0b\x32\x18.drtrl.server.DrtRequest\x12\x16\n\x0e\x65xpectedDemand\x18\x06 \x03(\x01\x12\x19\n\x11maxExpectedDemand\x18\x07 \x01(\x01\x12(\n\x0bwaitingTime\x18\x08 \x01(\x0b\x32\x13.drtrl.server.Stats\x12\'\n\ntravelTime\x18\t \x01(\x0b\x32\x13.drtrl.server.Stats\x12+\n\x0e\x64rivenDistance\x18\n \x01(\x0b\x32\x13.drtrl.server.Stats\x12\x30\n\x13\x64rivenEmptyDistance\x18\x0b \x01(\x0b\x32\x13.drtrl.server.Stats\x12\x36\n\x19passengerTraveledDistance\x18\x0c \x01(\x0b\x32\x13.drtrl.server.Stats\x12\x17\n\x0fsimulationEnded\x18\r \x01(\x08\x32\x98\x02\n\x13RebalancingStrategy\x12Q\n\x10GetSpecification\x12\x13.drtrl.server.Empty\x1a&.drtrl.server.RebalancingSpecification\"\x00\x12Q\n\x0fGetCurrentState\x12\x1c.drtrl.server.SimulationTime\x1a\x1e.drtrl.server.RebalancingState\"\x00\x12[\n\x12PerformRebalancing\x12%.drtrl.server.RebalancingInstructions\x1a\x1c.drtrl.server.SimulationTime\"\x00\x42\x45\nCorg.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing.serverb\x06proto3'
 )
 
 
@@ -437,44 +437,6 @@ _REBALANCINGINSTRUCTIONS = _descriptor.Descriptor(
 )
 
 
-_REBALANCINGSTATE_REBALANCABLEVEHICLESPERZONEENTRY = _descriptor.Descriptor(
-  name='RebalancableVehiclesPerZoneEntry',
-  full_name='drtrl.server.RebalancingState.RebalancableVehiclesPerZoneEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='drtrl.server.RebalancingState.RebalancableVehiclesPerZoneEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='drtrl.server.RebalancingState.RebalancableVehiclesPerZoneEntry.value', index=1,
-      number=2, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=b'8\001',
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1188,
-  serialized_end=1254,
-)
-
 _REBALANCINGSTATE = _descriptor.Descriptor(
   name='RebalancingState',
   full_name='drtrl.server.RebalancingState',
@@ -491,57 +453,85 @@ _REBALANCINGSTATE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='rebalancableVehiclesPerZone', full_name='drtrl.server.RebalancingState.rebalancableVehiclesPerZone', index=1,
-      number=2, type=11, cpp_type=10, label=3,
+      name='rebalancableVehicles', full_name='drtrl.server.RebalancingState.rebalancableVehicles', index=1,
+      number=2, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='performedRequest', full_name='drtrl.server.RebalancingState.performedRequest', index=2,
-      number=3, type=11, cpp_type=10, label=3,
+      name='soonIdleVehicles', full_name='drtrl.server.RebalancingState.soonIdleVehicles', index=2,
+      number=3, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='rejectedRequests', full_name='drtrl.server.RebalancingState.rejectedRequests', index=3,
+      name='performedRequest', full_name='drtrl.server.RebalancingState.performedRequest', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='expectedDemand', full_name='drtrl.server.RebalancingState.expectedDemand', index=4,
-      number=5, type=1, cpp_type=5, label=3,
+      name='rejectedRequests', full_name='drtrl.server.RebalancingState.rejectedRequests', index=4,
+      number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='maxExpectedDemand', full_name='drtrl.server.RebalancingState.maxExpectedDemand', index=5,
-      number=6, type=1, cpp_type=5, label=1,
+      name='expectedDemand', full_name='drtrl.server.RebalancingState.expectedDemand', index=5,
+      number=6, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='maxExpectedDemand', full_name='drtrl.server.RebalancingState.maxExpectedDemand', index=6,
+      number=7, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='waitingTime', full_name='drtrl.server.RebalancingState.waitingTime', index=6,
-      number=7, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='travelTime', full_name='drtrl.server.RebalancingState.travelTime', index=7,
+      name='waitingTime', full_name='drtrl.server.RebalancingState.waitingTime', index=7,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='simulationEnded', full_name='drtrl.server.RebalancingState.simulationEnded', index=8,
-      number=9, type=8, cpp_type=7, label=1,
+      name='travelTime', full_name='drtrl.server.RebalancingState.travelTime', index=8,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='drivenDistance', full_name='drtrl.server.RebalancingState.drivenDistance', index=9,
+      number=10, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='drivenEmptyDistance', full_name='drtrl.server.RebalancingState.drivenEmptyDistance', index=10,
+      number=11, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='passengerTraveledDistance', full_name='drtrl.server.RebalancingState.passengerTraveledDistance', index=11,
+      number=12, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='simulationEnded', full_name='drtrl.server.RebalancingState.simulationEnded', index=12,
+      number=13, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -549,7 +539,7 @@ _REBALANCINGSTATE = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_REBALANCINGSTATE_REBALANCABLEVEHICLESPERZONEENTRY, ],
+  nested_types=[],
   enum_types=[
   ],
   serialized_options=None,
@@ -559,7 +549,7 @@ _REBALANCINGSTATE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=779,
-  serialized_end=1254,
+  serialized_end=1291,
 )
 
 _REBALANCINGSPECIFICATION.fields_by_name['zones'].message_type = _ZONE
@@ -567,12 +557,13 @@ _REBALANCINGINSTRUCTIONS_ZONETARGETS.containing_type = _REBALANCINGINSTRUCTIONS
 _REBALANCINGINSTRUCTIONS_MINCOSTFLOW.containing_type = _REBALANCINGINSTRUCTIONS
 _REBALANCINGINSTRUCTIONS.fields_by_name['zoneTargets'].message_type = _REBALANCINGINSTRUCTIONS_ZONETARGETS
 _REBALANCINGINSTRUCTIONS.fields_by_name['minCostFlow'].message_type = _REBALANCINGINSTRUCTIONS_MINCOSTFLOW
-_REBALANCINGSTATE_REBALANCABLEVEHICLESPERZONEENTRY.containing_type = _REBALANCINGSTATE
-_REBALANCINGSTATE.fields_by_name['rebalancableVehiclesPerZone'].message_type = _REBALANCINGSTATE_REBALANCABLEVEHICLESPERZONEENTRY
 _REBALANCINGSTATE.fields_by_name['performedRequest'].message_type = _DRTREQUEST
 _REBALANCINGSTATE.fields_by_name['rejectedRequests'].message_type = _DRTREQUEST
 _REBALANCINGSTATE.fields_by_name['waitingTime'].message_type = _STATS
 _REBALANCINGSTATE.fields_by_name['travelTime'].message_type = _STATS
+_REBALANCINGSTATE.fields_by_name['drivenDistance'].message_type = _STATS
+_REBALANCINGSTATE.fields_by_name['drivenEmptyDistance'].message_type = _STATS
+_REBALANCINGSTATE.fields_by_name['passengerTraveledDistance'].message_type = _STATS
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 DESCRIPTOR.message_types_by_name['Zone'] = _ZONE
 DESCRIPTOR.message_types_by_name['RebalancingSpecification'] = _REBALANCINGSPECIFICATION
@@ -649,23 +640,14 @@ _sym_db.RegisterMessage(RebalancingInstructions.ZoneTargets)
 _sym_db.RegisterMessage(RebalancingInstructions.MinCostFlow)
 
 RebalancingState = _reflection.GeneratedProtocolMessageType('RebalancingState', (_message.Message,), {
-
-  'RebalancableVehiclesPerZoneEntry' : _reflection.GeneratedProtocolMessageType('RebalancableVehiclesPerZoneEntry', (_message.Message,), {
-    'DESCRIPTOR' : _REBALANCINGSTATE_REBALANCABLEVEHICLESPERZONEENTRY,
-    '__module__' : 'drtrl.server.rebalancer_pb2'
-    # @@protoc_insertion_point(class_scope:drtrl.server.RebalancingState.RebalancableVehiclesPerZoneEntry)
-    })
-  ,
   'DESCRIPTOR' : _REBALANCINGSTATE,
   '__module__' : 'drtrl.server.rebalancer_pb2'
   # @@protoc_insertion_point(class_scope:drtrl.server.RebalancingState)
   })
 _sym_db.RegisterMessage(RebalancingState)
-_sym_db.RegisterMessage(RebalancingState.RebalancableVehiclesPerZoneEntry)
 
 
 DESCRIPTOR._options = None
-_REBALANCINGSTATE_REBALANCABLEVEHICLESPERZONEENTRY._options = None
 
 _REBALANCINGSTRATEGY = _descriptor.ServiceDescriptor(
   name='RebalancingStrategy',
@@ -674,8 +656,8 @@ _REBALANCINGSTRATEGY = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1257,
-  serialized_end=1537,
+  serialized_start=1294,
+  serialized_end=1574,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetSpecification',
