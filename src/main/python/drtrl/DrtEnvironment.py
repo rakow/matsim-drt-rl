@@ -45,7 +45,7 @@ class DrtEnvironment(Environment):
             self.observation_space = Box(low=0, high=1, shape=(1 + len(self.spec.zones),))
 
             # One target value per zone
-            self.action_space = Box(low=0, high=self.spec.fleetSize, shape=(len(self.spec.zones),))
+            self.action_space = Box(low=-1, high=1, shape=(len(self.spec.zones),))
         else:
             raise Exception("Invalid objective: %s" % self.objective)
 
@@ -61,6 +61,8 @@ class DrtEnvironment(Environment):
 
         cmd = RebalancingInstructions()
 
+        reward = 0
+
         if self.objective == DrtObjective.MIN_COST_FLOW:
 
             bound = 1.5
@@ -73,8 +75,22 @@ class DrtEnvironment(Environment):
             cmd.minCostFlow.beta = action[1]
 
         elif self.objective == DrtObjective.ZONE_TARGETS:
+
+            # max fleet of 50% per zone can be rebalanced
+            bound = self.spec.fleetSize / 2.0
+
+            action = (action + 1) * bound / 2
+            action = np.clip(action, 0, bound)
+
+            total = 0
             for a in action:
-                cmd.zoneTargets.vehicles.append(max(0, int(a)))
+                v = int(a)
+                cmd.zoneTargets.vehicles.append(v)
+                total += v
+
+            # Too many vehicles results in negative reward
+            if total > self.spec.fleetSize:
+                reward -= (total - self.spec.fleetSize)
 
         # submit current time
         cmd.currentTime = int(self.time)
@@ -84,7 +100,9 @@ class DrtEnvironment(Environment):
         state = self.update_state(response)
 
         # Any wait above 180min gives negative reward, divided to reduce the scale
-        reward = (180 * state.waitingTime.n + -state.waitingTime.sum) / 1000
+        reward += (180 * state.waitingTime.n + -state.waitingTime.sum) / (1000 * self.spec.fleetSize)
+
+        reward -= state.drivenEmptyDistance.sum / (1000 * self.spec.fleetSize)
 
         return self._state, reward, state.simulationEnded, {}
 

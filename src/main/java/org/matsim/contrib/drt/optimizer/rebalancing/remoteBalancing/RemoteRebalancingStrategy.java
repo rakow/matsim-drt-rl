@@ -94,6 +94,8 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 			return List.of();
 		}
 
+		log.info("Received targets={}", targets.getVehiclesList());
+
 		List<AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus> surpluses = new ArrayList<>();
 
 		int i = 0;

@@ -12,7 +12,7 @@ from mushroom_rl.utils.dataset import compute_J
 
 
 from drtrl import *
-from drtrl.DrtEnvironment import DrtEnvironment
+from drtrl.DrtEnvironment import DrtEnvironment, DrtObjective
 
 
 class Algorithm(Enum):
@@ -29,13 +29,14 @@ class Algorithm(Enum):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run RL experiment")
     parser.add_argument("--host", type=str, default="localhost:5555", help="Address of MATSim host")
+    parser.add_argument("--objective", type=DrtObjective, help="Objective type", default=DrtObjective.ZONE_TARGETS)
     parser.add_argument("--algorithm", type=str, choices=list(x.name.lower() for x in Algorithm),
                         help="Algorithm to run", required=True)
 
     args = parser.parse_args()
 
     # MDP
-    env = DrtEnvironment(args.host)
+    env = DrtEnvironment(args.host, args.objective)
 
     clazz = Algorithm[args.algorithm].value
 

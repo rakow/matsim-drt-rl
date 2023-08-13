@@ -393,9 +393,9 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 
 			double empty = (double) handles.totalDistance.get(o) - (double) handles.totalOccupiedDistance.get(o);
 
-			totalDistance.addValue(old.totalDistance - (double) handles.totalDistance.get(o));
-			totalEmptyDistance.addValue(empty);
-			totalPassangerDistance.addValue(old.totalPassengerTraveledDistance - (double) handles.totalPassengerTraveledDistance.get(o));
+			totalDistance.addValue((double) handles.totalDistance.get(o) - old.totalDistance);
+			totalEmptyDistance.addValue(empty - old.totalEmptyDistance);
+			totalPassangerDistance.addValue((double) handles.totalPassengerTraveledDistance.get(o) - old.totalPassengerTraveledDistance);
 
 			old.totalDistance = (double) handles.totalDistance.get(o);
 			old.totalEmptyDistance = empty;

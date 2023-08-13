@@ -30,8 +30,8 @@
 			<param name="writeDetailedCustomerStats" value="true"/>
 
 			<parameterset type="zonalSystem">
-				<param name="zonesGeneration" value="GridFromNetwork"/>
-				<param name="cellSize" value="2000"/>
+				<param name="zonesGeneration" value="ShapeFile"/>
+				<param name="zonesShapeFile" value="./ortsteile/ortsteile.shp"/>
 			</parameterset>
 
 			<parameterset type="rebalancing">
