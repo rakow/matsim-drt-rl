@@ -30,14 +30,17 @@
 			<param name="writeDetailedCustomerStats" value="true"/>
 
 			<parameterset type="zonalSystem">
-				<param name="zonesGeneration" value="GridFromNetwork"/>
-				<param name="cellSize" value="2000"/>
+				<param name="zonesGeneration" value="ShapeFile"/>
+				<param name="zonesShapeFile" value="./ortsteile/ortsteile.shp"/>
 			</parameterset>
 
 			<parameterset type="rebalancing">
 				<param name="interval" value="1800"/>
 				<!-- This is only there so that the consistency check does not fail, a different strategy will be used!!! -->
-				<parameterset type="PlusOneRebalancingStrategy"/>
+				<parameterset type="minCostFlowRebalancingStrategy">
+					<param name="targetAlpha" value="0.5"/>
+					<param name="targetBeta" value="0.5"/>
+				</parameterset>
 			</parameterset>
 
 			<parameterset type="drtfare">
@@ -88,8 +91,8 @@
 	</module>
 
 	<module name="controler">
-		<param name="outputDirectory" value="output/cottbus/" />
-		<param name="overwriteFiles" value="overwriteExistingFiles" />
+		<param name="outputDirectory" value="output/cottbus" />
+		<param name="overwriteFiles" value="deleteDirectoryIfExists" />
 		<param name="firstIteration" value="0" />
 		<param name="lastIteration" value="50" />
 	</module>

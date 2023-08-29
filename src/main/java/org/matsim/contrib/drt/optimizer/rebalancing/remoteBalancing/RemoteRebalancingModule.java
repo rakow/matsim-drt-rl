@@ -21,6 +21,7 @@
 package org.matsim.contrib.drt.optimizer.rebalancing.remoteBalancing;
 
 import org.matsim.contrib.drt.analysis.DrtEventSequenceCollector;
+import org.matsim.contrib.drt.analysis.DrtVehicleDistanceStats;
 import org.matsim.contrib.drt.analysis.zonal.DrtModeZonalSystemModule;
 import org.matsim.contrib.drt.analysis.zonal.DrtZonalSystem;
 import org.matsim.contrib.drt.analysis.zonal.DrtZoneTargetLinkSelector;
@@ -46,13 +47,13 @@ import org.matsim.core.config.Config;
 public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 
 	private final DrtConfigGroup drtCfg;
-	private final int port;
+	private final RemoteRebalancingParams params;
 
 
-	public RemoteRebalancingModule(DrtConfigGroup drtCfg, int port) {
+	public RemoteRebalancingModule(DrtConfigGroup drtCfg, RemoteRebalancingParams params) {
 		super(drtCfg.getMode());
 		this.drtCfg = drtCfg;
-		this.port = port;
+		this.params = params;
 	}
 
 
@@ -74,8 +75,9 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 		addEventHandlerBinding().to(modalKey(PreviousIterationDrtDemandEstimator.class));
 
 		bindModal(ConnectionManager.class).toProvider(modalProvider(getter -> new ConnectionManager(
-			port, getter.get(Config.class), params, getter.getModal(DrtZonalSystem.class),
-			getter.getModal(FleetSpecification.class), getter.getModal(DrtEventSequenceCollector.class), getter.getModal(ZonalDemandEstimator.class)
+			getter.get(Config.class), params, this.params, getter.getModal(DrtZonalSystem.class),
+			getter.getModal(FleetSpecification.class), getter.getModal(DrtEventSequenceCollector.class), getter.getModal(ZonalDemandEstimator.class),
+			getter.getModal(DrtVehicleDistanceStats.class)
 		))).asEagerSingleton();
 
 		addControlerListenerBinding().to(modalKey(ConnectionManager.class));
@@ -94,7 +96,7 @@ public class RemoteRebalancingModule extends AbstractDvrpModeModule {
 						getter.getModal(Fleet.class),
 						getter.getModal(RebalancingTargetCalculator.class),
 						getter.getModal(ZonalRelocationCalculator.class),
-						params))).asEagerSingleton();
+						params, RemoteRebalancingModule.this.params))).asEagerSingleton();
 			}
 		});
 	}
