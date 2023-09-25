@@ -24,7 +24,8 @@ class DPG(Base):
         alpha_theta = Parameter(5e-3 / self.n_tilings)
         alpha_omega = Parameter(0.5 / self.n_tilings)
         alpha_v = Parameter(0.5 / self.n_tilings)
-        tilings = Tiles.generate(self.n_tilings, [10, 10],
+
+        tilings = Tiles.generate(self.n_tilings, [10] * self.env.info.observation_space.low.shape[0],
                                  self.env.info.observation_space.low,
                                  self.env.info.observation_space.high + 1e-3)
 

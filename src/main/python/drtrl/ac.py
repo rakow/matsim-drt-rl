@@ -22,7 +22,7 @@ class AC(Base):
         alpha_r = Parameter(.0001)
         alpha_theta = Parameter(.001 / self.n_tilings)
         alpha_v = Parameter(.1 / self.n_tilings)
-        tilings = Tiles.generate(self.n_tilings - 1, [10, 10],
+        tilings = Tiles.generate(self.n_tilings - 1, [10] * self.env.info.observation_space.low.shape[0],
                                  self.env.info.observation_space.low,
                                  self.env.info.observation_space.high + 1e-3)
 
