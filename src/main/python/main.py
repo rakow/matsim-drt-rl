@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import argparse
-from enum import Enum
-
 import numpy as np
 from attrs import asdict
+from enum import Enum
+from time import strftime
 
 from mushroom_rl.core import Core
-from mushroom_rl.utils.dataset import compute_J
-
+from mushroom_rl.utils.dataset import compute_J, compute_metrics
 
 from drtrl import *
 from drtrl.DrtEnvironment import DrtEnvironment, DrtObjective
@@ -32,6 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--objective", type=DrtObjective, help="Objective type", default=DrtObjective.ZONE_TARGETS)
     parser.add_argument("--algorithm", type=str, choices=list(x.name.lower() for x in Algorithm),
                         help="Algorithm to run", required=True)
+    parser.add_argument("--eval", type=int, default=100, help="Evaluate each nth iteration")
 
     args = parser.parse_args()
 
@@ -51,8 +52,7 @@ if __name__ == "__main__":
     # Algorithm
     core = Core(agent, env)
 
-    n_eval = 3
-    n_epochs = 1 + env.spec.iterations - n_eval
+    n_epochs = 1 + env.spec.iterations
     gamma_eval = 1.
 
     if algo.is_pretrained():
@@ -67,10 +67,31 @@ if __name__ == "__main__":
         print('Epoch: 0')
         print('J: ', np.mean(J))
 
-    core.learn(n_episodes=n_epochs, n_steps_per_fit=5, render=False)
+    print("Training for", n_epochs, "epochs")
 
-    # Evaluate results during last iterations
-    for n in range(n_eval):
-        dataset = core.evaluate(n_episodes=1, render=False)
-        J = compute_J(dataset, gamma_eval)
-        print('J: ', np.mean(J))
+    out = os.path.join("output", strftime("%Y%m%d-%H%M") + "_%s.csv" % args.algorithm)
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+
+    epoch = 0
+
+    with open(out, "w") as f:
+
+        f.write("epoch,mean_reward\n")
+
+        while n_epochs > 0:
+
+            n = min(n_epochs, args.eval)
+
+            core.learn(n_episodes=n, n_steps_per_fit=5, render=False)
+
+            n_epochs -= n
+            epoch += n
+
+            if n_epochs > 0:
+                dataset = core.evaluate(n_episodes=1, render=False, quiet=True)
+                metrics = compute_metrics(dataset, gamma_eval)
+                J = compute_J(dataset, gamma_eval)
+                n_epochs -= 1
+
+                f.write("%d,%f\n" % (epoch, np.mean(J)))
+                f.flush()
