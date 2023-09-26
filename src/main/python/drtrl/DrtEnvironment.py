@@ -9,7 +9,7 @@ from mushroom_rl.utils.spaces import Box
 
 from .server.rebalancer_pb2 import Empty, SimulationTime, RebalancingInstructions
 from .server.rebalancer_pb2_grpc import RebalancingStrategyStub
-
+from .DummyServer import DummyServer
 
 class DrtObjective(Enum):
     """ The action space of the environment """
@@ -22,8 +22,13 @@ class DrtEnvironment(Environment):
     """ Environment for DRT Rebalancing"""
 
     def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW):
-        channel = grpc.insecure_channel(server)
-        self.server = RebalancingStrategyStub(channel)
+
+        if server.startswith("dummy"):
+            self.server = DummyServer()
+        else:
+            channel = grpc.insecure_channel(server)
+            self.server = RebalancingStrategyStub(channel)
+
         self.time = 0
 
         print("Connecting to %s..." % server)
