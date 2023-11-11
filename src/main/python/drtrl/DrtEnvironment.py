@@ -83,14 +83,18 @@ class DrtEnvironment(Environment):
 
             action = (action + 1) * bound / 2
             action = np.clip(action, 0, bound)
+
             total = 0
             for a in action:
                 v = int(a)
                 cmd.zoneTargets.vehicles.append(v)
                 total += v
 
+            # Too many vehicles results in negative reward
+            if total > self.spec.fleetSize:
+                reward -= (total - self.spec.fleetSize)
 
-    # submit current time
+        # submit current time
         cmd.currentTime = int(self.time)
 
         response = self.server.PerformRebalancing(cmd)
@@ -98,14 +102,12 @@ class DrtEnvironment(Environment):
         state = self.update_state(response)
 
         # Linear penalty for each additional minute over 5 minutes, divided to reduce the scale
-        for wt in state.waitingTime.n:
-            if wt > 5:
-                reward_waiting_time += (wt - 5)
-        reward_waiting_time = (reward_waiting_time + -state.waitingTime.sum) / (1000 * self.spec.fleetSize)
+        if state.waitingTime.n > 5:
+            reward_waiting_time = (5 * state.waitingTime.n + -state.waitingTime.sum) / (1000 * self.spec.fleetSize)
+
         reward_empty_distance = state.drivenEmptyDistance.sum / (1000 * self.spec.fleetSize)
 
-        reward = .90 * reward_waiting_time + .10 * reward_empty_distance
-
+        reward += .90 * reward_waiting_time + .10 * reward_empty_distance
         return self._state, reward, state.simulationEnded, {}
 
     def reset(self, state=None):
