@@ -104,7 +104,7 @@ class DrtEnvironment(Environment):
 
         state = self.update_state(response)
 
-        # Any wait above 180min gives negative reward, divided to reduce the scale
+        # Any wait above 180 seconds gives negative reward, divided to reduce the scale
         reward += (180 * state.waitingTime.n + -state.waitingTime.sum) / (1000 * self.spec.fleetSize)
 
         reward -= state.drivenEmptyDistance.sum / (1000 * self.spec.fleetSize)
