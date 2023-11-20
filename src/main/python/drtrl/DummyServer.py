@@ -65,12 +65,12 @@ class DummyServer(RebalancingStrategyServicer):
         for i in range(len(self.zone_targets)):
             surplus = int(self.demand[self.time - 1, i] - min(available, self.zone_targets[i]))
 
-            # too fee vehicles results in waiting time
+            # too few vehicles results in waiting time
             if surplus > 0:
                 state.waitingTime.n += self.demand[self.time - 1, i]
                 state.waitingTime.sum += 1000 * surplus
 
-            # too much vehicles results in empty milage
+            # too many vehicles results in empty milage
             elif surplus < 0:
                 state.drivenEmptyDistance.n += -surplus
                 state.drivenEmptyDistance.sum += 1000 * -surplus
