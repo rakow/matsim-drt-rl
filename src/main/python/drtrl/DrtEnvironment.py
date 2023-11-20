@@ -81,6 +81,8 @@ class DrtEnvironment(Environment):
 
         elif self.objective == DrtObjective.ZONE_TARGETS:
 
+            # TODO: try without this normalization
+
             # max fleet of 50% per zone can be rebalanced
             bound = self.spec.fleetSize / 2.0
 

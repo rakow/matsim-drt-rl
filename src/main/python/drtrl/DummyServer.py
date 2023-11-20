@@ -9,7 +9,7 @@ from .server.rebalancer_pb2_grpc import RebalancingStrategyServicer
 class DummyServer(RebalancingStrategyServicer):
     """ Dummy server to simulate an artificial drt environment """
 
-    def __init__(self, zones=20, vehicles=10, shuffle=10, iterations=10_000):
+    def __init__(self, zones=20, vehicles=10, shuffle=15, iterations=15_000):
         super().__init__()
         self.spec = RebalancingSpecification()
         self.spec.iterations = iterations
@@ -26,6 +26,7 @@ class DummyServer(RebalancingStrategyServicer):
         self.time = 0
         # Targets received from rebalancing
         self.zone_targets = np.zeros(zones)
+        # Current iteration (day), not the time step
         self.n = 0
         self.shuffle = shuffle
 
@@ -45,8 +46,11 @@ class DummyServer(RebalancingStrategyServicer):
         self.time = int(request.time // self.spec.interval)
 
         state.expectedDemand.extend(self.demand[self.time])
+
         # avoid division by zero
-        state.maxExpectedDemand = max(1, np.max(self.demand[self.time]))
+#        state.maxExpectedDemand = max(1, np.max(self.demand[self.time]))
+        # Disables normalization
+        state.maxExpectedDemand = 1
 
         if request.time == self.spec.endTime - self.spec.interval:
 
@@ -63,21 +67,25 @@ class DummyServer(RebalancingStrategyServicer):
         available = self.spec.fleetSize
         # Simulate waiting time based on rebalancing
         for i in range(len(self.zone_targets)):
-            surplus = int(self.demand[self.time - 1, i] - min(available, self.zone_targets[i]))
+            current_demand = self.demand[self.time - 1, i]
+            # demand surplus
+            surplus = int(current_demand - min(available, self.zone_targets[i]))
 
             # too few vehicles results in waiting time
             if surplus > 0:
-                state.waitingTime.n += self.demand[self.time - 1, i]
+                state.waitingTime.n += current_demand
+                # 1000 seconds per missing
                 state.waitingTime.sum += 1000 * surplus
 
             # too many vehicles results in empty milage
             elif surplus < 0:
                 state.drivenEmptyDistance.n += -surplus
+                # 1000m per vehicle too much
                 state.drivenEmptyDistance.sum += 1000 * -surplus
 
             # similar to waiting time of zero
             else:
-                state.waitingTime.n += self.demand[self.time - 1, i]
+                state.waitingTime.n += current_demand
 
             # subtract used vehicles
             available -= self.zone_targets[i]
