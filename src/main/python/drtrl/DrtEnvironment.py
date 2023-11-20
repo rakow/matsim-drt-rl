@@ -21,7 +21,7 @@ class DrtObjective(Enum):
 class DrtEnvironment(Environment):
     """ Environment for DRT Rebalancing"""
 
-    def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW):
+    def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW, normalize=True):
 
         if server.startswith("dummy"):
             self.server = DummyServer()
@@ -30,6 +30,7 @@ class DrtEnvironment(Environment):
             self.server = RebalancingStrategyStub(channel)
 
         self.time = 0
+        self.normalize = normalize
 
         print("Connecting to %s..." % server)
         self.spec = self.server.GetSpecification(Empty(), wait_for_ready=True)
@@ -50,7 +51,10 @@ class DrtEnvironment(Environment):
             self.observation_space = Box(low=0, high=1, shape=(1 + len(self.spec.zones),))
 
             # One target value per zone
-            self.action_space = Box(low=-1, high=1, shape=(len(self.spec.zones),))
+            if self.normalize:
+                self.action_space = Box(low=-1, high=1, shape=(len(self.spec.zones),))
+            else:
+                self.action_space = Box(low=0, high=self.spec.fleetSize, shape=(len(self.spec.zones),))
         else:
             raise Exception("Invalid objective: %s" % self.objective)
 
@@ -59,8 +63,8 @@ class DrtEnvironment(Environment):
         super().__init__(mdp_info)
 
     def __repr__(self):
-        return "<DrtEnvironment: interval=%d, fleetSize=%d, startTime=%.0f, zones=%d" % (
-            self.spec.interval, self.spec.fleetSize, self.spec.startTime, len(self.spec.zones))
+        return "<DrtEnvironment: interval=%d, fleetSize=%d, startTime=%.0f, zones=%d, normalize=%s" % (
+            self.spec.interval, self.spec.fleetSize, self.spec.startTime, len(self.spec.zones), str(self.normalize))
 
     def step(self, action):
 
@@ -81,13 +85,14 @@ class DrtEnvironment(Environment):
 
         elif self.objective == DrtObjective.ZONE_TARGETS:
 
-            # TODO: try without this normalization
+            if self.normalize:
+                # max fleet of 50% per zone can be rebalanced
+                bound = self.spec.fleetSize / 2.0
 
-            # max fleet of 50% per zone can be rebalanced
-            bound = self.spec.fleetSize / 2.0
-
-            action = (action + 1) * bound / 2
-            action = np.clip(action, 0, bound)
+                action = (action + 1) * bound / 2
+                action = np.clip(action, 0, bound)
+            else:
+                action = np.clip(action, 0, self.spec.fleetSize)
 
             total = 0
             for a in action:
