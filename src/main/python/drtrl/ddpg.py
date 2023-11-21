@@ -67,6 +67,7 @@ class ActorNetwork(nn.Module):
 
         return self._h3(features2)
 
+
 class RegressionNetwork(nn.Module):
     """ Simpler network only doing regression """
 
@@ -80,9 +81,10 @@ class RegressionNetwork(nn.Module):
         features1 = torch.squeeze(state, 1).float()
 
         # Put copy of state into the network (without time for now)
-        a = self.weight.mul(features1[:,1:])
+        a = self.weight.mul(features1[:, 1:])
 
         return a
+
 
 @define
 class DDPG(Base):
@@ -110,7 +112,7 @@ class DDPG(Base):
         actor_input_shape = self.env.info.observation_space.shape
         actor_params = dict(network=ActorNetwork if args.normalize else RegressionNetwork,
                             n_features=n_features,
-                            upper_bound=self.env.info.action_space.high[0], # same upper bound for both
+                            upper_bound=self.env.info.action_space.high[0],  # same upper bound for both
                             input_shape=actor_input_shape,
                             output_shape=self.env.info.action_space.shape)
 

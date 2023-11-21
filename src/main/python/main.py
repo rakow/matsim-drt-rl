@@ -30,6 +30,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run RL experiment")
     parser.add_argument("--host", type=str, default="localhost:5555", help="Address of MATSim host")
     parser.add_argument("--objective", type=DrtObjective, help="Objective type", default=DrtObjective.ZONE_TARGETS)
+    parser.add_argument("--output", type=str, help="Path to output csv")
     parser.add_argument("--algorithm", type=str, choices=list(x.name.lower() for x in Algorithm),
                         help="Algorithm to run", required=True)
     parser.add_argument("--normalize", type=bool, default=False, action=argparse.BooleanOptionalAction,
@@ -71,7 +72,11 @@ if __name__ == "__main__":
 
     print("Training for", n_epochs, "epochs")
 
-    out = os.path.join("output", strftime("%Y%m%d-%H%M") + "_%s.csv" % args.algorithm)
+    if args.output is None:
+        out = os.path.join("output", strftime("%Y%m%d-%H%M") + "_%s.csv" % args.algorithm)
+    else:
+        out = args.output
+
     os.makedirs(os.path.dirname(out), exist_ok=True)
 
     epoch = 0
@@ -83,6 +88,10 @@ if __name__ == "__main__":
         while n_epochs > 0:
 
             n = min(n_epochs, args.eval)
+
+            # Do one less train epoch, so that the last one is always evaluation
+            if n == n_epochs:
+                n -= 1
 
             core.learn(n_episodes=n, n_steps_per_fit=5, render=False)
 
