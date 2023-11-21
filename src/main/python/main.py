@@ -32,14 +32,14 @@ if __name__ == "__main__":
     parser.add_argument("--objective", type=DrtObjective, help="Objective type", default=DrtObjective.ZONE_TARGETS)
     parser.add_argument("--algorithm", type=str, choices=list(x.name.lower() for x in Algorithm),
                         help="Algorithm to run", required=True)
-    parser.add_argument("--normalize", type=bool, default=True, action=argparse.BooleanOptionalAction,
+    parser.add_argument("--normalize", type=bool, default=False, action=argparse.BooleanOptionalAction,
                         help="Normalize action space")
     parser.add_argument("--eval", type=int, default=100, help="Evaluate each nth iteration")
 
     args = parser.parse_args()
 
     # MDP
-    env = DrtEnvironment(args.host, args.objective, normalize=args.normalize)
+    env = DrtEnvironment(args.host, args.objective, normalize_action_space=args.normalize)
 
     clazz = Algorithm[args.algorithm].value
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     print("Running", args.algorithm)
     print("Parameters", asdict(algo))
 
-    agent = algo.create_agent()
+    agent = algo.create_agent(args)
 
     # Algorithm
     core = Core(agent, env)

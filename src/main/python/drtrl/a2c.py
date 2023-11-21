@@ -41,7 +41,7 @@ class Network(nn.Module):
 @define
 class A2C(Base):
 
-    def create_agent(self) -> Agent:
+    def create_agent(self, args) -> Agent:
         alg_params = dict(actor_optimizer={'class': optim.RMSprop,
                                            'params': {'lr': 7e-4,
                                                       'eps': 3e-3}},

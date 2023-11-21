@@ -70,7 +70,7 @@ class SAC(Base):
     def is_pretrained(self):
         return True
 
-    def create_agent(self) -> Agent:
+    def create_agent(self, args) -> Agent:
         # Settings
         initial_replay_size = 64
         max_replay_size = 50000

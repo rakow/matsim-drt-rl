@@ -18,7 +18,7 @@ from .base import Base
 class AC(Base):
     n_tilings: int = 11
 
-    def create_agent(self) -> Agent:
+    def create_agent(self, args) -> Agent:
         alpha_r = Parameter(.0001)
         alpha_theta = Parameter(.001 / self.n_tilings)
         alpha_v = Parameter(.1 / self.n_tilings)

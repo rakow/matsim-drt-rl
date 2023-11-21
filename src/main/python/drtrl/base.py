@@ -19,6 +19,6 @@ class Base:
         return False
 
     @abstractmethod
-    def create_agent(self) -> Agent:
+    def create_agent(self, args) -> Agent:
         """ Create the agent that will then be used in the training loop """
         pass

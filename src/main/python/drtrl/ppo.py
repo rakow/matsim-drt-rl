@@ -37,11 +37,10 @@ class Network(nn.Module):
 
         return a
 
-
 @define
 class PPO(Base):
 
-    def create_agent(self) -> Agent:
+    def create_agent(self, args) -> Agent:
 
         policy_params = dict(
             std_0=1.,

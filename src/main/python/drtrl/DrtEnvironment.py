@@ -21,7 +21,7 @@ class DrtObjective(Enum):
 class DrtEnvironment(Environment):
     """ Environment for DRT Rebalancing"""
 
-    def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW, normalize=True):
+    def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW, normalize_action_space=True):
 
         if server.startswith("dummy"):
             self.server = DummyServer()
@@ -30,7 +30,7 @@ class DrtEnvironment(Environment):
             self.server = RebalancingStrategyStub(channel)
 
         self.time = 0
-        self.normalize = normalize
+        self.normalize_action_space = normalize_action_space
 
         print("Connecting to %s..." % server)
         self.spec = self.server.GetSpecification(Empty(), wait_for_ready=True)
@@ -51,7 +51,7 @@ class DrtEnvironment(Environment):
             self.observation_space = Box(low=0, high=1, shape=(1 + len(self.spec.zones),))
 
             # One target value per zone
-            if self.normalize:
+            if self.normalize_action_space:
                 self.action_space = Box(low=-1, high=1, shape=(len(self.spec.zones),))
             else:
                 self.action_space = Box(low=0, high=self.spec.fleetSize, shape=(len(self.spec.zones),))
@@ -63,8 +63,8 @@ class DrtEnvironment(Environment):
         super().__init__(mdp_info)
 
     def __repr__(self):
-        return "<DrtEnvironment: interval=%d, fleetSize=%d, startTime=%.0f, zones=%d, normalize=%s" % (
-            self.spec.interval, self.spec.fleetSize, self.spec.startTime, len(self.spec.zones), str(self.normalize))
+        return "<DrtEnvironment: interval=%d, fleetSize=%d, startTime=%.0f, zones=%d, normalize_action_space=%s" % (
+            self.spec.interval, self.spec.fleetSize, self.spec.startTime, len(self.spec.zones), str(self.normalize_action_space))
 
     def step(self, action):
 
@@ -85,7 +85,7 @@ class DrtEnvironment(Environment):
 
         elif self.objective == DrtObjective.ZONE_TARGETS:
 
-            if self.normalize:
+            if self.normalize_action_space:
                 # max fleet of 50% per zone can be rebalanced
                 bound = self.spec.fleetSize / 2.0
 

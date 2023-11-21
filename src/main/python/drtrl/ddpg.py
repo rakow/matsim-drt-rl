@@ -67,6 +67,22 @@ class ActorNetwork(nn.Module):
 
         return self._h3(features2)
 
+class RegressionNetwork(nn.Module):
+    """ Simpler network only doing regression """
+
+    def __init__(self, input_shape, output_shape, n_features, **kwargs):
+        super(RegressionNetwork, self).__init__()
+
+        n_input = input_shape[-1]
+        self.weight = torch.nn.Parameter(torch.ones(n_input - 1), requires_grad=True)
+
+    def forward(self, state, **kwargs):
+        features1 = torch.squeeze(state, 1).float()
+
+        # Put copy of state into the network (without time for now)
+        a = self.weight.mul(features1[:,1:])
+
+        return a
 
 @define
 class DDPG(Base):
@@ -74,7 +90,7 @@ class DDPG(Base):
     def is_pretrained(self):
         return True
 
-    def create_agent(self) -> Agent:
+    def create_agent(self, args) -> Agent:
         # Policy
         policy_class = OrnsteinUhlenbeckPolicy
         policy_params = dict(sigma=np.ones(1) * .2, theta=.15, dt=1e-2)
@@ -92,7 +108,7 @@ class DDPG(Base):
 
         # Approximator
         actor_input_shape = self.env.info.observation_space.shape
-        actor_params = dict(network=ActorNetwork,
+        actor_params = dict(network=ActorNetwork if args.normalize else RegressionNetwork,
                             n_features=n_features,
                             upper_bound=self.env.info.action_space.high[0], # same upper bound for both
                             input_shape=actor_input_shape,
