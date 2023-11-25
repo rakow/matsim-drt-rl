@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import torch
-import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from attrs import define
@@ -13,78 +11,7 @@ from mushroom_rl.policy import OrnsteinUhlenbeckPolicy
 
 from .DrtEnvironment import DrtObjective
 from .base import Base
-
-
-class CriticNetwork(nn.Module):
-    def __init__(self, input_shape, output_shape, n_features, **kwargs):
-        super().__init__()
-
-        n_input = input_shape[-1]
-        n_output = output_shape[0]
-
-        self._h1 = nn.Linear(n_input, n_features)
-        self._h2 = nn.Linear(n_features, n_features)
-        self._h3 = nn.Linear(n_features, n_output)
-
-        nn.init.xavier_uniform_(self._h1.weight,
-                                gain=nn.init.calculate_gain('relu'))
-        nn.init.xavier_uniform_(self._h2.weight,
-                                gain=nn.init.calculate_gain('relu'))
-        nn.init.xavier_uniform_(self._h3.weight,
-                                gain=nn.init.calculate_gain('linear'))
-
-    def forward(self, state, action):
-        state_action = torch.cat((state.float(), action.float()), dim=1)
-        features1 = F.relu(self._h1(state_action))
-        features2 = F.relu(self._h2(features1))
-        q = self._h3(features2)
-
-        return torch.squeeze(q)
-
-
-class ActorNetwork(nn.Module):
-    def __init__(self, input_shape, output_shape, n_features, upper_bound, **kwargs):
-        super(ActorNetwork, self).__init__()
-
-        n_input = input_shape[-1]
-        n_output = output_shape[0]
-
-        self.upper_bound = upper_bound
-        self._h1 = nn.Linear(n_input, n_features)
-        self._h2 = nn.Linear(n_features, n_features)
-        self._h3 = nn.Linear(n_features, n_output)
-
-        nn.init.xavier_uniform_(self._h1.weight,
-                                gain=nn.init.calculate_gain('relu'))
-        nn.init.xavier_uniform_(self._h2.weight,
-                                gain=nn.init.calculate_gain('relu'))
-        nn.init.xavier_uniform_(self._h3.weight,
-                                gain=nn.init.calculate_gain('linear'))
-
-    def forward(self, state):
-        features1 = F.relu(self._h1(torch.squeeze(state, 1).float()))
-        features2 = F.relu(self._h2(features1))
-
-        return self._h3(features2)
-
-
-class RegressionNetwork(nn.Module):
-    """ Simpler network only doing regression """
-
-    def __init__(self, input_shape, output_shape, n_features, **kwargs):
-        super(RegressionNetwork, self).__init__()
-
-        n_input = input_shape[-1]
-        self.weight = torch.nn.Parameter(torch.ones(n_input - 1), requires_grad=True)
-
-    def forward(self, state, **kwargs):
-        features1 = torch.squeeze(state, 1).float()
-
-        # Put copy of state into the network (without time for now)
-        a = self.weight.mul(features1[:, 1:])
-
-        return a
-
+from .nn import get_critic_net, get_actor_net
 
 @define
 class DDPG(Base):
@@ -110,7 +37,7 @@ class DDPG(Base):
 
         # Approximator
         actor_input_shape = self.env.info.observation_space.shape
-        actor_params = dict(network=ActorNetwork if args.normalize else RegressionNetwork,
+        actor_params = dict(network=get_actor_net(args),
                             n_features=n_features,
                             upper_bound=self.env.info.action_space.high[0],  # same upper bound for both
                             input_shape=actor_input_shape,
@@ -120,7 +47,7 @@ class DDPG(Base):
                            'params': {'lr': 1e-5}}
 
         critic_input_shape = (actor_input_shape[0] + self.env.info.action_space.shape[0],)
-        critic_params = dict(network=CriticNetwork,
+        critic_params = dict(network=get_critic_net(args),
                              optimizer={'class': optim.Adam,
                                         'params': {'lr': 1e-3}},
                              loss=F.mse_loss,

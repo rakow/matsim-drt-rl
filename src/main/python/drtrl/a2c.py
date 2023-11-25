@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import torch
-import torch.nn as nn
+
 import torch.nn.functional as F
 import torch.optim as optim
 from attrs import define
@@ -10,32 +9,7 @@ from mushroom_rl.core import Agent
 from mushroom_rl.policy import GaussianTorchPolicy
 
 from .base import Base
-
-
-class Network(nn.Module):
-    def __init__(self, input_shape, output_shape, n_features, **kwargs):
-        super(Network, self).__init__()
-
-        n_input = input_shape[-1]
-        n_output = output_shape[0]
-
-        self._h1 = nn.Linear(n_input, n_features)
-        self._h2 = nn.Linear(n_features, n_features)
-        self._h3 = nn.Linear(n_features, n_output)
-
-        nn.init.xavier_uniform_(self._h1.weight,
-                                gain=nn.init.calculate_gain('tanh'))
-        nn.init.xavier_uniform_(self._h2.weight,
-                                gain=nn.init.calculate_gain('tanh'))
-        nn.init.xavier_uniform_(self._h3.weight,
-                                gain=nn.init.calculate_gain('linear'))
-
-    def forward(self, state, **kwargs):
-        features1 = torch.tanh(self._h1(torch.squeeze(state, 1).float()))
-        features2 = torch.tanh(self._h2(features1))
-        a = self._h3(features2)
-
-        return a
+from .nn import get_critic_net, get_actor_net
 
 
 @define
@@ -48,7 +22,7 @@ class A2C(Base):
                           max_grad_norm=0.5,
                           ent_coeff=0.01)
 
-        critic_params = dict(network=Network,
+        critic_params = dict(network=get_critic_net(args),
                              optimizer={'class': optim.RMSprop,
                                         'params': {'lr': 7e-4,
                                                    'eps': 1e-5}},
@@ -66,7 +40,7 @@ class A2C(Base):
             use_cuda=False
         )
 
-        policy = GaussianTorchPolicy(Network,
+        policy = GaussianTorchPolicy(get_actor_net(args),
                                      self.env.info.observation_space.shape,
                                      self.env.info.action_space.shape,
                                      **policy_params)

@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import argparse
 import numpy as np
+import os
 from attrs import asdict
 from enum import Enum
-from time import strftime
-
+from json import dump
 from mushroom_rl.core import Core
 from mushroom_rl.utils.dataset import compute_J, compute_metrics
+from time import strftime
 
 from drtrl import *
 from drtrl.DrtEnvironment import DrtEnvironment, DrtObjective
@@ -33,9 +33,11 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=str, help="Path to output csv")
     parser.add_argument("--algorithm", type=str, choices=list(x.name.lower() for x in Algorithm),
                         help="Algorithm to run", required=True)
+    parser.add_argument("--eval", type=int, default=100, help="Evaluate each nth iteration")
     parser.add_argument("--normalize", type=bool, default=False, action=argparse.BooleanOptionalAction,
                         help="Normalize action space")
-    parser.add_argument("--eval", type=int, default=100, help="Evaluate each nth iteration")
+    parser.add_argument("--actor-network", type=str, default="dense", choices=["dense", "regression"])
+    parser.add_argument("--critic-network", type=str, default="dense", choices=["dense"])
 
     args = parser.parse_args()
 
@@ -76,6 +78,9 @@ if __name__ == "__main__":
         out = os.path.join("output", strftime("%Y%m%d-%H%M") + "_%s.csv" % args.algorithm)
     else:
         out = args.output
+
+    with open(out.replace(".csv", ".json"), "w") as f:
+        dump(vars(args), f, default=str, indent=4)
 
     os.makedirs(os.path.dirname(out), exist_ok=True)
 
