@@ -17,10 +17,10 @@ class PPO(Base):
 
     def create_agent(self, args) -> Agent:
         policy_params = dict(
-            std_0=1.,
+            std_0=args.std_init,
             n_features=32,
+            upper_bound=self.env.spec.fleetSize + 1,
             use_cuda=torch.cuda.is_available()
-
         )
 
         ppo_params = dict(actor_optimizer={'class': optim.Adam,

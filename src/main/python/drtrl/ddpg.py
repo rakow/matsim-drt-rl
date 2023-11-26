@@ -22,7 +22,7 @@ class DDPG(Base):
     def create_agent(self, args) -> Agent:
         # Policy
         policy_class = OrnsteinUhlenbeckPolicy
-        policy_params = dict(sigma=np.ones(1) * .2, theta=.15, dt=1e-2)
+        policy_params = dict(sigma=np.ones(1) * args.std_init, theta=.15, dt=1e-2)
 
         # Settings
         n_steps = self.env.spec.endTime // self.env.spec.interval
@@ -39,7 +39,7 @@ class DDPG(Base):
         actor_input_shape = self.env.info.observation_space.shape
         actor_params = dict(network=get_actor_net(args),
                             n_features=n_features,
-                            upper_bound=self.env.info.action_space.high[0],  # same upper bound for both
+                            upper_bound=self.env.spec.fleetSize + 1,
                             input_shape=actor_input_shape,
                             output_shape=self.env.info.action_space.shape)
 

@@ -36,7 +36,8 @@ if __name__ == "__main__":
     parser.add_argument("--eval", type=int, default=100, help="Evaluate each nth iteration")
     parser.add_argument("--normalize", type=bool, default=False, action=argparse.BooleanOptionalAction,
                         help="Normalize action space")
-    parser.add_argument("--actor-network", type=str, default="dense", choices=["dense", "regression"])
+    parser.add_argument("--std-init", type=float, default=0.1, help="Standard deviation for exploration")
+    parser.add_argument("--actor-network", type=str, default="dense", choices=["dense", "gumbel", "regression"])
     parser.add_argument("--critic-network", type=str, default="dense", choices=["dense"])
 
     args = parser.parse_args()

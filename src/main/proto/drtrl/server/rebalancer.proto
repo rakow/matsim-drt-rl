@@ -138,7 +138,7 @@ message RebalancingInstructions {
     /*
      Target values in same order as zones.
     */
-    repeated int32 vehicles = 1;
+    repeated double vehicles = 1;
   }
 
   /*

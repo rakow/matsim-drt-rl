@@ -96,9 +96,8 @@ class DrtEnvironment(Environment):
 
             total = 0
             for a in action:
-                v = int(a)
-                cmd.zoneTargets.vehicles.append(v)
-                total += v
+                cmd.zoneTargets.vehicles.append(a)
+                total += round(a)
 
             # Too many vehicles results in negative reward
             if total > self.spec.fleetSize:

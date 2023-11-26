@@ -35,8 +35,9 @@ class A2C(Base):
         alg_params['critic_params'] = critic_params
 
         policy_params = dict(
-            std_0=1.,
+            std_0=args.std_init,
             n_features=64,
+            upper_bound=self.env.spec.fleetSize + 1,
             use_cuda=False
         )
 

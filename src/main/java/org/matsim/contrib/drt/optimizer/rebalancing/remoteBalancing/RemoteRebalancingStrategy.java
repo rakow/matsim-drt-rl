@@ -100,14 +100,14 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 
 		int i = 0;
 		for (DrtZone z : zonalSystem.getZones().values()) {
-			int target = targets.getVehicles(i++);
+			long target = Math.round(targets.getVehicles(i++));
 
 			int rebalancable = rebalancableVehiclesPerZone.getOrDefault(z, List.of()).size();
 			int soonIdle = soonIdleVehiclesPerZone.getOrDefault(z, List.of()).size();
 
-			int surplus = Math.min(rebalancable + soonIdle - target, rebalancable);
+			long surplus = Math.min(rebalancable + soonIdle - target, rebalancable);
 
-			surpluses.add(new AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus(z, surplus));
+			surpluses.add(new AggregatedMinCostRelocationCalculator.DrtZoneVehicleSurplus(z, (int) surplus));
 		}
 
 

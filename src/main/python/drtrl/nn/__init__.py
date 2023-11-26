@@ -2,7 +2,7 @@
 
 __all__ = ["get_actor_net", "get_critic_net", "DenseNetwork", "DenseCriticNetwork", "RegressionNetwork"]
 
-from .dense import DenseNetwork, DenseCriticNetwork
+from .dense import DenseNetwork, DenseGumbelNetwork, DenseCriticNetwork
 from .simple import RegressionNetwork
 
 
@@ -13,6 +13,8 @@ def get_actor_net(args):
         return DenseNetwork
     elif args.actor_network == "regression":
         return RegressionNetwork
+    elif args.actor_network == "gumbel":
+        return DenseGumbelNetwork
 
     raise ValueError(f"Unknown actor network {args.actor_network}")
 

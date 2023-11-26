@@ -33,11 +33,13 @@ class SAC(Base):
         actor_input_shape = self.env.info.observation_space.shape
         actor_mu_params = dict(network=get_actor_net(args),
                                n_features=n_features,
+                               upper_bound=self.env.spec.fleetSize + 1,
                                input_shape=actor_input_shape,
                                output_shape=self.env.info.action_space.shape,
                                use_cuda=use_cuda)
-        actor_sigma_params = dict(network=DenseNetwork,
+        actor_sigma_params = dict(network=get_actor_net(args),
                                   n_features=n_features,
+                                  upper_bound=self.env.spec.fleetSize + 1,
                                   input_shape=actor_input_shape,
                                   output_shape=self.env.info.action_space.shape,
                                   use_cuda=use_cuda)
