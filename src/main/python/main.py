@@ -61,12 +61,16 @@ if __name__ == "__main__":
     n_epochs = 1 + env.spec.iterations
     gamma_eval = 1.
 
+    # keep track of matsim iteration number, 0th iteration is not used by RL
+    n_matsim = 1
+
     if algo.is_pretrained():
         # Fill the replay memory with random samples
         core.learn(n_episodes=5, n_steps_per_fit=5)
 
         # Subtract used epochs
         n_epochs -= 6
+        n_matsim += 6
 
         dataset = core.evaluate(n_episodes=1, render=False)
         J = compute_J(dataset, gamma_eval)
@@ -89,7 +93,7 @@ if __name__ == "__main__":
 
     with open(out, "w") as f:
 
-        f.write("epoch,mean_reward\n")
+        f.write("epoch,matsim_iteration,mean_reward\n")
 
         while n_epochs > 0:
 
@@ -102,6 +106,7 @@ if __name__ == "__main__":
             core.learn(n_episodes=n, n_steps_per_fit=5, render=False)
 
             n_epochs -= n
+            n_matsim += n
             epoch += n
 
             if n_epochs > 0:
@@ -109,6 +114,7 @@ if __name__ == "__main__":
                 metrics = compute_metrics(dataset, gamma_eval)
                 J = compute_J(dataset, gamma_eval)
                 n_epochs -= 1
+                n_matsim += 1
 
-                f.write("%d,%f\n" % (epoch, np.mean(J)))
+                f.write("%d,%d,%f\n" % (epoch, n_matsim, np.mean(J)))
                 f.flush()
