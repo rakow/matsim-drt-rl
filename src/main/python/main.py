@@ -84,10 +84,10 @@ if __name__ == "__main__":
     else:
         out = args.output
 
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+
     with open(out.replace(".csv", ".json"), "w") as f:
         dump(vars(args), f, default=str, indent=4)
-
-    os.makedirs(os.path.dirname(out), exist_ok=True)
 
     epoch = 0
 
