@@ -93,6 +93,12 @@
 	<module name="controler">
 		<param name="outputDirectory" value="output/cottbus" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" />
+		<param name="writeEventsInterval" value="500"/>
+		<param name="writePlansInterval" value="500"/>
+		<param name="writePlansInterval" value="500"/>
+		<param name="writeTripsInterval" value="500" />
+		<param name="createGraphs" value="false" />
+
 		<param name="firstIteration" value="0" />
 		<param name="lastIteration" value="50" />
 	</module>
