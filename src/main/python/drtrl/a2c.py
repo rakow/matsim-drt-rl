@@ -22,7 +22,7 @@ class A2C(Base):
                           max_grad_norm=0.5,
                           ent_coeff=0.01)
 
-        critic_params = dict(network=get_critic_net(args),
+        critic_params = dict(network=get_critic_net(args, action_input=False),
                              optimizer={'class': optim.RMSprop,
                                         'params': {'lr': 7e-4,
                                                    'eps': 1e-5}},
