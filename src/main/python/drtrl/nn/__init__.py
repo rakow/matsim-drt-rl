@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ["get_actor_net", "get_critic_net", "DenseNetwork", "DenseCriticNetwork", "RegressionNetwork"]
+__all__ = ["get_actor_net", "get_critic_net", "DenseNetwork", "DenseCriticNetwork", "RegressionNetwork",
+           "RegressionBiasNetwork"]
 
 from .dense import DenseNetwork, DenseGumbelNetwork, DenseCriticNetwork
-from .simple import RegressionNetwork
+from .simple import RegressionNetwork, RegressionBiasNetwork
 
 
 def get_actor_net(args):
@@ -13,6 +14,8 @@ def get_actor_net(args):
         return DenseNetwork
     elif args.actor_network == "regression":
         return RegressionNetwork
+    elif args.actor_network == "regression-bias":
+        return RegressionBiasNetwork
     elif args.actor_network == "gumbel":
         return DenseGumbelNetwork
 
@@ -31,6 +34,8 @@ def get_critic_net(args, action_input=True):
             return DenseNetwork
         elif args.critic_network == "regression":
             return RegressionNetwork
+        elif args.critic_network == "regression-bias":
+            return RegressionBiasNetwork
         elif args.critic_network == "gumbel":
             return DenseGumbelNetwork
 

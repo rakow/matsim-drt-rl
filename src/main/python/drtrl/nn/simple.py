@@ -20,3 +20,22 @@ class RegressionNetwork(nn.Module):
         a = self.weight.mul(features1[:, 1:])
 
         return a
+
+
+class RegressionBiasNetwork(nn.Module):
+    """ Simpler network only doing regression with added bias """
+
+    def __init__(self, input_shape, output_shape, **kwargs):
+        super(RegressionNetwork, self).__init__()
+
+        n_input = input_shape[-1]
+        self.weight = nn.Parameter(torch.ones(n_input - 1), requires_grad=True)
+        self.bias = nn.Parameter(torch.zeros(n_input - 1), requires_grad=True)
+
+    def forward(self, state, **kwargs):
+        features1 = torch.squeeze(state, 1).float()
+
+        # Put copy of state into the network (without time for now)
+        a = self.weight.mul(features1[:, 1:]) + self.bias
+
+        return a

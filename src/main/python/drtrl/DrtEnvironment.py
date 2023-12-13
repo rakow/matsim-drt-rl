@@ -21,7 +21,8 @@ class DrtObjective(Enum):
 class DrtEnvironment(Environment):
     """ Environment for DRT Rebalancing"""
 
-    def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW, normalize_action_space=True):
+    def __init__(self, server, objective=DrtObjective.MIN_COST_FLOW,
+                 normalize_action_space=True, normalize_demand=True):
 
         if server.startswith("dummy"):
             self.server = DummyServer()
@@ -31,6 +32,7 @@ class DrtEnvironment(Environment):
 
         self.time = 0
         self.normalize_action_space = normalize_action_space
+        self.normalize_demand = normalize_demand
 
         print("Connecting to %s..." % server)
         self.spec = self.server.GetSpecification(Empty(), wait_for_ready=True)
@@ -146,7 +148,10 @@ class DrtEnvironment(Environment):
             self._state[1] = sum(state.expectedDemand) / state.maxExpectedDemand
         elif self.objective == DrtObjective.ZONE_TARGETS:
             for i in range(len(state.expectedDemand)):
-                self._state[i + 1] = state.expectedDemand[i] / state.maxExpectedDemand
+                if self.normalize_demand:
+                    self._state[i + 1] = state.expectedDemand[i] / state.maxExpectedDemand
+                else:
+                    self._state[i + 1] = state.expectedDemand[i]
 
         return state
 

@@ -34,16 +34,22 @@ if __name__ == "__main__":
     parser.add_argument("--algorithm", type=str, choices=list(x.name.lower() for x in Algorithm),
                         help="Algorithm to run", required=True)
     parser.add_argument("--eval", type=int, default=100, help="Evaluate each nth iteration")
+    parser.add_argument("--steps-per-fit", type=int, default=5, help="Steps per fit")
     parser.add_argument("--normalize", type=bool, default=False, action=argparse.BooleanOptionalAction,
                         help="Normalize action space")
+    parser.add_argument("--normalize-demand", type=bool, default=True, action=argparse.BooleanOptionalAction,
+                        help="Normalize demand")
     parser.add_argument("--std-init", type=float, default=0.1, help="Standard deviation for exploration")
-    parser.add_argument("--actor-network", type=str, default="dense", choices=["dense", "gumbel", "regression"])
+    parser.add_argument("--actor-network", type=str, default="dense",
+                        choices=["dense", "gumbel", "regression", "regression-bias"])
     parser.add_argument("--critic-network", type=str, default="dense", choices=["dense"])
 
     args = parser.parse_args()
 
     # MDP
-    env = DrtEnvironment(args.host, args.objective, normalize_action_space=args.normalize)
+    env = DrtEnvironment(args.host, args.objective,
+                         normalize_action_space=args.normalize,
+                         normalize_demand=args.normalize_demand)
 
     clazz = Algorithm[args.algorithm].value
 
@@ -103,7 +109,7 @@ if __name__ == "__main__":
             if n == n_epochs:
                 n -= 1
 
-            core.learn(n_episodes=n, n_steps_per_fit=5, render=False)
+            core.learn(n_episodes=n, n_steps_per_fit=args.steps_per_fit, render=False)
 
             n_epochs -= n
             n_matsim += n
