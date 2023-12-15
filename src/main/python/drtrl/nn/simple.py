@@ -26,7 +26,7 @@ class RegressionBiasNetwork(nn.Module):
     """ Simpler network only doing regression with added bias """
 
     def __init__(self, input_shape, output_shape, **kwargs):
-        super(RegressionNetwork, self).__init__()
+        super(RegressionBiasNetwork, self).__init__()
 
         n_input = input_shape[-1]
         self.weight = nn.Parameter(torch.ones(n_input - 1), requires_grad=True)
