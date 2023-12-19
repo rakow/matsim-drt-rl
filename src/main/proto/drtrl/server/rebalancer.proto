@@ -183,6 +183,9 @@ message RebalancingState {
    */
   repeated DrtRequest rejectedRequests = 5;
 
+// TODO: sent vehicles per zone
+//  repeated double sentVehicles = 14;
+
   /*
     Expected demand for current time step in order of zones.
    */
