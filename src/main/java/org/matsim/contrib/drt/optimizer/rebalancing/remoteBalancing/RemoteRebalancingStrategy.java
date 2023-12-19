@@ -69,6 +69,8 @@ public class RemoteRebalancingStrategy implements RebalancingStrategy {
 
 		Rebalancer.RebalancingState state = server.setCurrentState(time, rebalancableVehiclesPerZone, soonIdleVehiclesPerZone);
 
+		log.info("Time step {}, expected demand per zone: {}", state.getSimulationTime(), state.getExpectedDemandList());
+
 		// Check if last time step was signaled
 		if (state.getSimulationEnded())
 			return List.of();

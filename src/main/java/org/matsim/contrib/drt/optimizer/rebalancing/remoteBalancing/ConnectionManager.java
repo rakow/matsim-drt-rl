@@ -199,7 +199,7 @@ final class ConnectionManager extends RebalancingStrategyGrpc.RebalancingStrateg
 		}
 
 		// For debugging and info
-		log.info("Demands from {} to {}: {}", remoteParams.startRebalancing, remoteParams.endRebalancing, demands);
+		log.info("Sum of demands per time step from {} to {}: {}", remoteParams.startRebalancing, remoteParams.endRebalancing, demands);
 		log.info("Skipping time-steps: {}", skipTimestep);
 	}
 
