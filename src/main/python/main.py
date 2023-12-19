@@ -96,10 +96,11 @@ if __name__ == "__main__":
         dump(vars(args), f, default=str, indent=4)
 
     epoch = 0
+    eval_step = 0
 
     with open(out, "w") as f:
 
-        f.write("epoch,matsim_iteration,mean_reward\n")
+        f.write("epoch,matsim_iteration,mean_reward,eval_step\n")
 
         while n_epochs > 0:
 
@@ -107,7 +108,7 @@ if __name__ == "__main__":
 
             # Do one less train epoch, so that the last one is always evaluation
             if n == n_epochs:
-                n -= 1
+                n -= 5
 
             core.learn(n_episodes=n, n_steps_per_fit=args.steps_per_fit, render=False)
 
@@ -115,12 +116,17 @@ if __name__ == "__main__":
             n_matsim += n
             epoch += n
 
-            if n_epochs > 0:
-                dataset = core.evaluate(n_episodes=1, render=False, quiet=True)
-                metrics = compute_metrics(dataset, gamma_eval)
-                J = compute_J(dataset, gamma_eval)
-                n_epochs -= 1
-                n_matsim += 1
+            # Do 5 evaluation episodes, to reduce randomness
+            for i in range(5):
 
-                f.write("%d,%d,%f\n" % (epoch, n_matsim, np.mean(J)))
-                f.flush()
+                if n_epochs > 0:
+                    dataset = core.evaluate(n_episodes=1, render=False, quiet=True)
+                    metrics = compute_metrics(dataset, gamma_eval)
+                    J = compute_J(dataset, gamma_eval)
+                    n_epochs -= 1
+                    n_matsim += 1
+
+                    f.write("%d,%d,%f,%f\n" % (epoch, n_matsim, np.mean(J), eval_step))
+                    f.flush()
+
+            eval_step += 1
