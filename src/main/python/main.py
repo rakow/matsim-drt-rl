@@ -126,7 +126,7 @@ if __name__ == "__main__":
                     n_epochs -= 1
                     n_matsim += 1
 
-                    f.write("%d,%d,%f,%f\n" % (epoch, n_matsim, np.mean(J), eval_step))
+                    f.write("%d,%d,%f,%d\n" % (epoch, n_matsim, np.mean(J), eval_step))
                     f.flush()
 
             eval_step += 1
